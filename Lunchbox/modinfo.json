@@ -8,5 +8,6 @@
     "version": "1.0.0",
     "dependencies": {
         "game": "1.21.0"
-    }
+    },
+	"website": "https://github.com/pmarincak/vintage-story-lunchbox"
 }
