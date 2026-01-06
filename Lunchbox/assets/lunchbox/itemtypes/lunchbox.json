@@ -39,7 +39,7 @@
 	"attributes": {
 		"backpack": {
 			"quantitySlots": 4,
-			"slotBgColor": "#c2ffe8"
+			"slotBgColor": "#e8c2ff"
 		}
 	},
 	"shape": { "base": "item/lunchbox" },
