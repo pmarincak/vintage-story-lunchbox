@@ -1,0 +1,34 @@
+{
+  "ingredientPattern": "PIP,PGP,PMP",
+  "ingredients": {
+    "I": {
+      "type": "block",
+      "code": "game:glacierice",
+      "quantity": 3
+    },
+    "G": {
+      "type": "item",
+      "code": "game:drygrass",
+      "quantity": 5
+    },
+    "M": {
+      "type": "item",
+      "code": "game:ingot-*",
+      "allowedVariants": [ "zinc", "tin" ],
+      "quantity": 1
+    },
+    "P": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "quantity": 2
+    }
+  },
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "cooler-{wood}"
+  }
+}
+
