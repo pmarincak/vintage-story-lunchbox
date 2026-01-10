@@ -40,6 +40,11 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
+        // This value isn't being displayed to the user in the menu
+        // For some reason it isn't set properly in the constructor
+        // Quick Hack
+        _defaultPerishableFactor = _lunchbox?.Attributes?["defaultSpoilSpeedMult"].Exists == true ? _lunchbox.Attributes["defaultSpoilSpeedMult"].AsFloat() : _defaultPerishableFactor;
+
         // This info technically lives on the Lunchbox but the order looks strange so we'll put it here
         dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(_defaultPerishableFactor, 2)));
     }
