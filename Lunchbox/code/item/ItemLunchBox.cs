@@ -90,12 +90,10 @@ public class ItemLunchBox : Item
 
         ItemSlotBagContent? cooked_container_slot = null;
         ItemSlotBagContent? meal_holding_container_slot = null;
+        ItemSlotBagContent? first_edible_slot = null;
         foreach (ItemSlotBagContent? slot in contents)
         {
             if (slot == null) { continue; }
-
-            // If our slot has nutrition information then exit search
-            if (FoodItemUtility.HasNutritionInformation(slot, _player_entity)) { return slot; }
 
             // Cooked Container Search (ex. Crocks, Pots)
             var item = slot.Itemstack?.Collectible;
@@ -116,6 +114,17 @@ public class ItemLunchBox : Item
                 meal_holding_container_slot = slot;
             }
 
+            // If our slot has nutrition information
+            // This could also include cooked containers so let's make sure we don't select it
+            if (first_edible_slot == null && item is not BlockCookedContainerBase && FoodItemUtility.HasNutritionInformation(slot, _player_entity)) 
+            {
+                first_edible_slot = slot;
+            }
+
+            // We found an edible slot and we haven't found a cooked container so this is the slot we want to eat
+            if (first_edible_slot != null && cooked_container_slot == null) { return first_edible_slot; }
+
+            // We haven't found both a container or a meal container so keep looking
             if (meal_holding_container_slot == null || cooked_container_slot == null) { continue; }
 
             // Make Meal
@@ -130,7 +139,7 @@ public class ItemLunchBox : Item
             return meal_holding_container_slot;
         }
 
-        return null;
+        return first_edible_slot;
     }
 
 

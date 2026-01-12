@@ -1,8 +1,8 @@
 {
-	"code": "lunchbox",
+	"code": "cooler",
 	"creativeinventory": {
 		"general": [ "*" ],
-		"items": ["*"]
+		"items": [ "*" ]
 	},
 	"class": "Lunchbox.LunchboxItem",
 	"behaviors": [
@@ -22,35 +22,26 @@
 		},
 		{ "name": "Lunchbox.LunchboxBehaviour" }
 	],
-	"variantgroups": [
-		{
-			"code": "shape",
-			"states": [ "normal" ]
-		},
-		{
-			"code": "material",
-			"states": [ "reed", "papyrus" ]
-		},
-		{
-			"code": "color",
-			"states": ["plain", "mordant", "blue", "red", "yellow", "green", "purple", "pink", "orange", "brown", "gray", "black", "white"]
-		}
-	],
 	"attributes": {
+		"defaultSpoilSpeedMult": 0.75,
 		"backpack": {
 			"quantitySlots": 4,
-			"slotBgColor": "#e8c2ff"
+			"slotBgColor": "#d9ffc2"
 		}
 	},
-	"shape": { "base": "item/lunchbox" },
+	"variantgroups": [
+		{
+			"code": "wood",
+			"states": [ "aged" ],
+			"loadFromProperties": "block/wood"
+		}
+	],
+	"shape": { "base": "item/cooler" },
 	"texturesByType": {
-		"*-plain": {
-			"color": { "base": "game:block/cloth/linen/normal1" },
-			"basket": { "base": "game:item/bag/basket/{material}" }
-		},
 		"*": {
-			"color": { "base": "game:block/cloth/linen/{color}" },
-			"basket": { "base": "game:item/bag/basket/{material}" }
+			"wood": {
+				"base": "game:block/wood/planks/{wood}*"
+			}
 		}
 	},
 	"maxstacksize": 1,
