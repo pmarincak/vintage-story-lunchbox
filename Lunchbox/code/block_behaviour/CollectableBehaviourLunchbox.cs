@@ -140,11 +140,11 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     private float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
     {
         // If it's invalid skip
-        if (transType != EnumTransitionType.Perish) return baseMul;
-        if (stack == null || stack.Collectible == null) return baseMul;
+        if (transType != EnumTransitionType.Perish) return 1;
+        if (stack == null || stack.Collectible == null) return 1;
 
-        // If it's not in a Lunchbox skip
-        if (!stack.TempAttributes.GetBool(LUNCHBOX_ATTRIBUTE, false)) return baseMul;
+        // If it's not in this Lunchbox skip
+        if (stack.TempAttributes.GetInt(LUNCHBOX_ATTRIBUTE, -1) != _lunchbox.ItemId) return 1;
 
         // No support for per-food-category perish rate yet
         return baseMul * _defaultPerishableFactor;
@@ -160,7 +160,10 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
          * We need to flag that this item we've added to the slot belongs to a Lunchbox
          * Whether we tick for spoilage depends on if we have any Multipliers to apply
          */
-        stack?.TempAttributes.SetBool(LUNCHBOX_ATTRIBUTE, HasSpoilageRateMul());
+        if (HasSpoilageRateMul())
+        {
+            stack?.TempAttributes.SetInt(LUNCHBOX_ATTRIBUTE, _lunchbox.ItemId);
+        }
     }
 
     /**
