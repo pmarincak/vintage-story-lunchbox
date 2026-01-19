@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using static HarmonyLib.Code;
 
 #nullable disable
 
@@ -21,7 +17,8 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     // Generic
     public List<ItemSlotBagContent> _slots;
     public InventoryBase _inventory;
-    ItemLunchBox _lunchbox;
+    CollectibleObject _lunchbox;
+    private Type _slot_type;
 
     // Spoilage
     private float _defaultPerishableFactor = 1.0f;
@@ -29,7 +26,29 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
     public CollectableBehaviorLunchbox(CollectibleObject obj) : base(obj)
     {
-        _lunchbox = obj as ItemLunchBox;
+        _lunchbox = obj;
+    }
+
+    public override void Initialize(JsonObject properties)
+    {
+        base.Initialize(properties);
+
+        ParseSlotType(properties["slotType"].AsString(""));
+    }
+
+    /**
+     * \brief Parses the provided slot \a type to use for creating slots.
+     * \sa GetOrCreateSlots
+     */
+    private void ParseSlotType(string type)
+    {
+        if (type == "Generic")
+        {
+            _slot_type = typeof(ItemSlotBagContent);
+        }
+        else {
+            _slot_type = typeof(FoodSlot);
+        }
     }
 
     public new void Store(ItemStack bagstack, ItemSlotBagContent slot)
@@ -73,7 +92,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
             for (int slotIndex = 0; slotIndex < quantitySlots; slotIndex++)
             {
-                ItemSlotBagContent slot = new FoodSlot(parentinv, bagIndex, slotIndex, flags); // Change
+                ItemSlotBagContent slot = (ItemSlotBagContent)Activator.CreateInstance(_slot_type, parentinv, bagIndex, slotIndex, flags); // Change
                 slot.HexBackgroundColor = bgcolhex;
                 bagContents.Add(slot);
                 slotsTree["slot-" + slotIndex] = new ItemstackAttribute(null);
@@ -89,7 +108,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
             foreach (var val in slotsTree)
             {
                 int slotIndex = val.Key.Split("-")[1].ToInt();
-                ItemSlotBagContent slot = new FoodSlot(parentinv, bagIndex, slotIndex, flags); // Change
+                ItemSlotBagContent slot = (ItemSlotBagContent)Activator.CreateInstance(_slot_type, parentinv, bagIndex, slotIndex, flags); // Change
                 slot.HexBackgroundColor = bgcolhex;
 
                 if (val.Value?.GetValue() != null)
@@ -115,7 +134,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
          * There seems to be no way to register the lunchbox auto-eat functionality on server connection. 
          * The only place that seems doable is here when the inventory slots are created.
          */
-        _lunchbox?.ConfigureAutoEat(world, parentinv);
+        ((ILunchbox)_lunchbox)?.ConfigureAutoEat(world, parentinv);
 
         /*
          * Register Spoilage Rate Multiplier to the Inventory
@@ -144,7 +163,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         if (stack == null || stack.Collectible == null) return 1;
 
         // If it's not in this Lunchbox skip
-        if (stack.TempAttributes.GetInt(LUNCHBOX_ATTRIBUTE, -1) != _lunchbox.ItemId) return 1;
+        if (stack.TempAttributes.GetInt(LUNCHBOX_ATTRIBUTE, -1) != _lunchbox.Id) return 1;
 
         // No support for per-food-category perish rate yet
         return baseMul * _defaultPerishableFactor;
@@ -162,7 +181,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
          */
         if (HasSpoilageRateMul())
         {
-            stack?.TempAttributes.SetInt(LUNCHBOX_ATTRIBUTE, _lunchbox.ItemId);
+            stack?.TempAttributes.SetInt(LUNCHBOX_ATTRIBUTE, _lunchbox.Id);
         }
     }
 

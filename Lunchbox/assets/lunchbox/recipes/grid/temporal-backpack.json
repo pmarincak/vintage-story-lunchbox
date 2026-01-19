@@ -1,0 +1,27 @@
+{
+  "ingredientPattern": "LLG,LLL,GML",
+  "ingredients": {
+    "L": {
+      "type": "item",
+      "code": "game:leather-sturdy-plain",
+      "quantity": 2
+    },
+    "G": {
+      "type": "item",
+      "code": "game:gear-temporal",
+      "quantity": 1
+    },
+    "M": {
+      "type": "item",
+      "code": "game:ingot-cupronickel",
+      "quantity": 1
+    }
+  },
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "block",
+    "code": "temporal-backpack"
+  }
+}
+

@@ -2,13 +2,11 @@ using Vintagestory.API.Common;
 
 namespace Lunchbox;
 
-public class ItemLunchBox : Item, ILunchbox
+public class BlockLunchBox : Block, ILunchbox
 {
     EntityPlayer? ILunchbox._player_entity { get; set; }
 
-    public ItemLunchBox() : base() { }
-
-    public ItemLunchBox(int itemId) : base(itemId) { }
+    public BlockLunchBox() : base() { }
 
     /**
     * \brief Called when the item changes inventory slots.
