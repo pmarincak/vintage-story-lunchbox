@@ -4,7 +4,7 @@
     "modid": "lunchbox",
     "name": "Lunchbox",
     "authors": [ "azurempress" ],
-    "description": "Adds a lunchbox storage container which automatically feeds the player when hungry.",
+    "description": "Adds various storage containers which automatically feeds the player when hungry.",
     "version": "1.2.0",
     "dependencies": {
         "game": "1.21.0"
