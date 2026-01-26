@@ -1,0 +1,148 @@
+{
+	"code": "temporal-backpack",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"items": [ "*" ]
+	},
+	"class": "Lunchbox.LunchboxItem",
+	"behaviors": [
+		{
+			"name": "GroundStorable",
+			"properties": {
+				"layout": "SingleCenter",
+				"collisionBox": {
+					"x1": 0.25,
+					"y1": 0,
+					"z1": 0.25,
+					"x2": 0.75,
+					"y2": 0.375,
+					"z2": 0.75
+				}
+			}
+		},
+		{
+			"name": "Lunchbox.LunchboxBehaviour",
+			"properties": {
+				"slotType": "Generic"
+			}
+		}
+	],
+	"attributes": {
+		"defaultSpoilSpeedMult": 0.75,
+		"backpack": {
+			"quantitySlots": 8,
+			"slotBgColor": "#76a9ff"
+		},
+		"attachableToEntity": {
+			"categoryCode": "backpack",
+			"attachedShape": { "base": "item/temporal-backpack-attached" }
+		}
+	},
+	"shape": { "base": "item/temporal-backpack" },
+	"textures": {
+		"darktone": {
+			"base": "game:block/leather/chromium",
+			"overlays": [ "game:block/overlay/gradient1" ]
+		},
+		"midtone": {
+			"base": "game:block/leather/chromium",
+			"overlays": [ "game:block/overlay/gradient1" ]
+		},
+		"leather": { "base": "game:block/leather/chromium" },
+		"flaps": { "base": "game:block/leather/chromium" },
+		"metal": { "base": "game:block/metal/sheet/tinbronze2" }
+	},
+	"lightHsv": [ 32, 5, 3 ],
+	"lightAbsorption": 0,
+	"sidesolid": {
+		"all": false
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"maxstacksize": 1,
+	"storageFlags": 2,
+	"guiTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": -20,
+			"y": 16,
+			"z": 180
+		},
+		"origin": {
+			"x": 0.53,
+			"y": 0.35,
+			"z": 0.5
+		},
+		"scale": 2.3,
+		"rotate": true
+	},
+	"fpHandTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0.2
+		},
+		"rotation": {
+			"x": 20,
+			"y": -73,
+			"z": 10
+		},
+		"scale": 2.5
+	},
+	"tpHandTransform": {
+		"translation": {
+			"x": -0.61,
+			"y": -0.67,
+			"z": -0.65
+		},
+		"rotation": {
+			"x": -6,
+			"y": 1,
+			"z": 3
+		},
+		"scale": 0.86
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 180,
+			"y": 33,
+			"z": -180
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 4.5
+	},
+	"selectionboxbytype": {
+		"*": {
+			"x1": 0.25,
+			"y1": 0,
+			"z1": 0.25,
+			"x2": 0.75,
+			"y2": 0.75,
+			"z2": 0.75
+		}
+	},
+	"collisionboxbytype": {
+		"*": {
+			"x1": 0.25,
+			"y1": 0,
+			"z1": 0.25,
+			"x2": 0.75,
+			"y2": 0.75,
+			"z2": 0.75
+		}
+	}
+}
