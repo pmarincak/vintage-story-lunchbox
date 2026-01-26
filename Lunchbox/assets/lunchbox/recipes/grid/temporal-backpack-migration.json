@@ -1,0 +1,17 @@
+{
+  "ingredientPattern": "L",
+  "ingredients": {
+    "L": {
+      "type": "block",
+      "code": "temporal-backpack",
+      "quantity": 1
+    }
+  },
+  "width": 1,
+  "height": 1,
+  "output": {
+    "type": "item",
+    "code": "temporal-backpack"
+  }
+}
+

@@ -5,7 +5,7 @@
     "name": "Lunchbox",
     "authors": [ "azurempress" ],
     "description": "Adds various storage containers which automatically feeds the player when hungry.",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "dependencies": {
         "game": "1.21.0"
     },
