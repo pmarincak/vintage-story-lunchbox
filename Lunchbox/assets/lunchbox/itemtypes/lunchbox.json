@@ -20,7 +20,13 @@
 				}
 			}
 		},
-		{ "name": "Lunchbox.LunchboxBehaviour" }
+		{ "name": "Lunchbox.LunchboxBehaviour" },
+		{
+			"name": "GroundStoredHeldBag",
+			"properties": {
+				"dialogTitleLangCode": "lunchboxcontents"
+			}
+		}
 	],
 	"variantgroups": [
 		{

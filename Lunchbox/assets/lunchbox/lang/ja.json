@@ -4,7 +4,8 @@
 	"item-cooler-*": "クーラーボックス",
 	"itemdesc-cooler-*": "お腹がすいた時に貯蔵食品を自動的に食べます。",
 	"item-temporal-backpack": "テンポラル・バックパック",
-	"itemdesc-temporal-backpack": "お腹がすいた時に貯蔵食品を自動的に食べます。"
+	"itemdesc-temporal-backpack": "お腹がすいた時に貯蔵食品を自動的に食べます。",
+	"lunchboxcontents": "お弁当の中身"
 }
 
 
