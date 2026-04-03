@@ -25,6 +25,12 @@
 			"properties": {
 				"slotType": "Generic"
 			}
+		},
+		{
+			"name": "GroundStoredHeldBag",
+			"properties": {
+				"dialogTitleLangCode": "temporalbackpackcontents"
+			}
 		}
 	],
 	"attributes": {

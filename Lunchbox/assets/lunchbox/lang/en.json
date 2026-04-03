@@ -6,5 +6,6 @@
 	"item-temporal-backpack": "Temporal Backpack",
 	"itemdesc-temporal-backpack": "Stores food which will be eaten automatically when hungry.",
 	"lunchboxcontents": "Lunchbox Contents",
-	"coolercontents": "Cooler Contents"
+	"coolercontents": "Cooler Contents",
+	"temporalbackpackcontents": "Temporal Backpack Contents"
 }
