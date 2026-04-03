@@ -11,7 +11,8 @@ Adds a lunchbox storage container which automatically feeds the player when hung
 
 |Release Version| Vintage Story Version |
 |--|--|
-| 1.0.x | 1.21.x+ |
+| 1.x.y | 1.21.x |
+| 1.3.x | 1.22.x+ |
 
 ## Download
 
