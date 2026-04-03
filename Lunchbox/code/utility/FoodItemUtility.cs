@@ -60,7 +60,7 @@ public static class FoodItemUtility
      */
     public static EntityPlayer? GetPlayerFromInventory(InventoryBase inventory)
     {
-        InventoryPlayerBackPacks? backpack_inventory = inventory as InventoryPlayerBackPacks;
+        InventoryBasePlayer? backpack_inventory = inventory as InventoryBasePlayer;
         return backpack_inventory?.Player.Entity;
     }
 
