@@ -10,7 +10,6 @@ public class LunchboxModSystem : ModSystem
 
         api.RegisterCollectibleBehaviorClass("Lunchbox.LunchboxBehaviour", typeof(CollectableBehaviorLunchbox));
         api.RegisterItemClass("Lunchbox.LunchboxItem", typeof(ItemLunchBox));
-        api.RegisterBlockClass("Lunchbox.LunchboxBlock", typeof(BlockLunchBox));
     }
 
 }
