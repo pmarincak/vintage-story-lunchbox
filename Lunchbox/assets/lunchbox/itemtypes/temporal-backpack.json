@@ -29,7 +29,7 @@
 		{
 			"name": "GroundStoredHeldBag",
 			"properties": {
-				"dialogTitleLangCode": "temporalbackpackcontents"
+				"dialogTitleLangCode": "lunchbox:temporalbackpackcontents"
 			}
 		}
 	],

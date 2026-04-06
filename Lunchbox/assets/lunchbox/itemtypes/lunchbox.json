@@ -24,7 +24,7 @@
 		{
 			"name": "GroundStoredHeldBag",
 			"properties": {
-				"dialogTitleLangCode": "lunchboxcontents"
+				"dialogTitleLangCode": "lunchbox:lunchboxcontents"
 			}
 		}
 	],
