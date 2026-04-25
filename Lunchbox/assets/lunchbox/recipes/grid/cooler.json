@@ -13,8 +13,7 @@
     },
     "M": {
       "type": "item",
-      "code": "game:ingot-*",
-      "allowedVariants": [ "zinc", "tin" ],
+      "code": "game:ingot-{metal}",
       "quantity": 1
     },
     "P": {
@@ -24,6 +23,9 @@
       "quantity": 2,
       "skipVariants": [ "agedacacia", "agedebony", "rottenebony" ]
     }
+  },
+  "allowedVariants": {
+    "metal": [ "zinc", "tin" ]
   },
   "width": 3,
   "height": 3,
