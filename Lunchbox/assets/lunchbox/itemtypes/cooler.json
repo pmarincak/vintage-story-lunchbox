@@ -38,15 +38,18 @@
 	"variantgroups": [
 		{
 			"code": "wood",
-			"states": [ "aged" ],
+			"states": [ "aged", "veryaged" ],
 			"loadFromProperties": "block/wood"
 		}
 	],
 	"shape": { "base": "item/cooler" },
-	"texturesByType": {
-		"*": {
-			"wood": {
-				"base": "game:block/wood/planks/{wood}*"
+	"textures": {
+		"wood": {
+			"baseByType": {
+				"*-aged": "game:block/wood/planks/aged/aged1",
+				"*-veryaged": "game:block/wood/planks/aged/veryaged1",
+				"*-agedebony": "game:block/wood/planks/aged/ebony1",
+				"*": "game:block/wood/planks/{wood}1"
 			}
 		}
 	},

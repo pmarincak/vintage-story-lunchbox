@@ -21,7 +21,8 @@
       "type": "item",
       "code": "game:plank-*",
       "name": "wood",
-      "quantity": 2
+      "quantity": 2,
+      "skipVariants": [ "agedacacia", "agedebony", "rottenebony" ]
     }
   },
   "width": 3,
