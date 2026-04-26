@@ -1,4 +1,6 @@
-﻿using Vintagestory.API.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Vintagestory.API.Common;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
 
@@ -12,10 +14,10 @@ public static class FoodItemUtility
     /**
      * \brief Returns whether the \a slot in the \a player_entity's inventory contains nutritional information or not.
      */
-    public static bool HasNutritionInformation(ItemSlot? slot, EntityPlayer? player_entity)
+    public static bool HasNutritionInformation(ItemSlot? slot, EntityPlayer? player_entity, IWorldAccessor? world)
     {
         var item = slot?.Itemstack?.Collectible;
-        FoodNutritionProperties? nutrition = item?.GetNutritionProperties(player_entity?.World, slot?.Itemstack, player_entity);
+        FoodNutritionProperties? nutrition = item?.GetNutritionProperties(world, slot?.Itemstack, player_entity);
 
         if (nutrition?.Satiety > 0.0f)
         {
@@ -23,7 +25,7 @@ public static class FoodItemUtility
         }
 
         BlockMeal? block_meal = item as BlockMeal;
-        FoodNutritionProperties[]? nutrition_props = block_meal?.GetContentNutritionProperties(player_entity?.World, slot, player_entity);
+        FoodNutritionProperties[]? nutrition_props = block_meal?.GetContentNutritionProperties(world, slot, player_entity);
         if (nutrition_props != null && nutrition_props.Length > 0)
         {
             bool result = true;
@@ -37,9 +39,9 @@ public static class FoodItemUtility
         }
 
         BlockCookedContainerBase? block_container = item as BlockCookedContainerBase;
-        if (block_container != null)
+        if (block_container != null && world != null)
         {
-            var contents = block_container.GetNonEmptyContents(player_entity?.World, slot?.Itemstack);
+            var contents = block_container.GetNonEmptyContents(world, slot?.Itemstack);
             return contents.Length > 0 && !MealMeshCache.ContentsRotten(contents);
         }
 
@@ -58,7 +60,7 @@ public static class FoodItemUtility
     /**
      * \brief Returns the PlayerEntity which owns the \a inventory, if applicable.
      */
-    public static EntityPlayer? GetPlayerFromInventory(InventoryBase inventory)
+    public static EntityPlayer? GetPlayerOwnerFromInventory(InventoryBase inventory)
     {
         InventoryBasePlayer? backpack_inventory = inventory as InventoryBasePlayer;
         return backpack_inventory?.Player.Entity;

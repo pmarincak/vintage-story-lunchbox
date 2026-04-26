@@ -28,8 +28,9 @@ class FoodSlot : ItemSlotBagContent
     private bool CanStoreItem(ItemSlot source_slot)
     {
         // We need to use our inventory not the inventory of the source_slot as the source_slot may be coming from an incompatible inventory
-        var player_entity = FoodItemUtility.GetPlayerFromInventory(inventory);
-        bool food_item_has_satiety = FoodItemUtility.HasNutritionInformation(source_slot, player_entity);
+        var player_entity = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
+        var world = player_entity == null ? inventory.Api.World : player_entity.World;
+        bool food_item_has_satiety = FoodItemUtility.HasNutritionInformation(source_slot, player_entity, world);
         bool is_meal_container = FoodItemUtility.IsMealContainer(source_slot);
 
         return food_item_has_satiety || is_meal_container;

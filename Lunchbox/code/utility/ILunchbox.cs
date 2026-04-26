@@ -28,7 +28,7 @@ internal interface ILunchbox
             return;
         }
 
-        var next_player_entity = FoodItemUtility.GetPlayerFromInventory(inventory);
+        var next_player_entity = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
 
         // No Change Needed
         if (_player_entity == next_player_entity)
@@ -93,6 +93,7 @@ internal interface ILunchbox
         ItemSlotBagContent? cooked_container_slot = null;
         ItemSlotBagContent? meal_holding_container_slot = null;
         ItemSlotBagContent? first_edible_slot = null;
+        var world = _player_entity?.World;
         foreach (ItemSlotBagContent? slot in contents)
         {
             if (slot == null) { continue; }
@@ -103,7 +104,7 @@ internal interface ILunchbox
             {
                 var container = item as BlockCookedContainerBase;
                 if (container.IsEmpty(slot.Itemstack)) { continue; }
-                if (!FoodItemUtility.HasNutritionInformation(slot, _player_entity)) { continue; }
+                if (!FoodItemUtility.HasNutritionInformation(slot, _player_entity, world)) { continue; }
 
                 cooked_container_slot = slot;
             }
@@ -111,14 +112,14 @@ internal interface ILunchbox
             // Meal Holding Container Check (ex. Bowls)
             if (meal_holding_container_slot == null && FoodItemUtility.IsMealHoldingContainer(slot))
             {
-                if (FoodItemUtility.HasNutritionInformation(slot, _player_entity)) { continue; }
+                if (FoodItemUtility.HasNutritionInformation(slot, _player_entity, world)) { continue; }
 
                 meal_holding_container_slot = slot;
             }
 
             // If our slot has nutrition information
             // This could also include cooked containers so let's make sure we don't select it
-            if (first_edible_slot == null && item is not BlockCookedContainerBase && FoodItemUtility.HasNutritionInformation(slot, _player_entity))
+            if (first_edible_slot == null && item is not BlockCookedContainerBase && FoodItemUtility.HasNutritionInformation(slot, _player_entity, world))
             {
                 first_edible_slot = slot;
             }
@@ -131,7 +132,7 @@ internal interface ILunchbox
 
             // Make Meal
             var cooked_container = cooked_container_slot.Itemstack?.Collectible as BlockCookedContainerBase;
-            bool? result = cooked_container?.ServeIntoStack(meal_holding_container_slot, cooked_container_slot, _player_entity.World);
+            bool? result = cooked_container?.ServeIntoStack(meal_holding_container_slot, cooked_container_slot, world);
             if (result != true)
             {
                 meal_holding_container_slot = null;
