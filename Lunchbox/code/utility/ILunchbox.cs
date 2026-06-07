@@ -30,11 +30,9 @@ internal interface ILunchbox
 
         var next_player_entity = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
 
-        // No Change Needed
-        if (_player_entity == next_player_entity)
-        {
-            return;
-        }
+        // On Multiplayer servers the backpack is still associated with a player entity
+        // When a user logs off and back on the entity has the same IDs
+        // However the watched attributes have been cleared so we need to reapply even if it's the same
 
         _player_entity?.WatchedAttributes.UnregisterListener(OnHungerChanged);
         _player_entity = next_player_entity;
