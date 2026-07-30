@@ -13,7 +13,6 @@ namespace Lunchbox;
 internal interface ILunchbox
 {
     static private string HUNGER_KEY = "hunger"; //! Key for hunger-related statistics for the player
-    static private float MIN_SATIETY = 15.0f; //! Minimum satiety that the player has before the lunchbox auto-eats
     EntityPlayer? _player_entity { get; set; } //! Player entity that has the lunchbox equiped. If null then the box is not equipped.
 
     /**
@@ -51,7 +50,7 @@ internal interface ILunchbox
         }
 
         ITreeAttribute hunger_tree = _player_entity.WatchedAttributes.GetTreeAttribute(HUNGER_KEY);
-        if (hunger_tree.GetFloat("currentsaturation") > MIN_SATIETY)
+        if (hunger_tree.GetFloat("currentsaturation") > (float) LunchboxModSystem.config.minimum_satiety)
         {
             return;
         }
