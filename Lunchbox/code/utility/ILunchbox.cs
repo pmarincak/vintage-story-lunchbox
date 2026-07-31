@@ -21,8 +21,20 @@ internal interface ILunchbox
      * \brief Configures auto-eat functionality for this lunchbox provided the \a world and the \a inventory the lunchbox resides in.
      * \note Assumes that the inventory contains this lunchbox.
      */
-    public void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory)
+    abstract void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory);
+
+    /**
+     * \brief Configures auto-eat functionality for this lunchbox provided the \a world and the \a inventory the lunchbox resides in.
+     * \note Assumes that the inventory contains this lunchbox.
+     * \note If enabled is false then autoeat will not be configured.
+     */
+    public void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory, bool enabled)
     {
+        if (!enabled)
+        {
+            return;
+        }
+
         // If the world is not server-side then auto-eat functionality will fail
         if (!(world is IServerWorldAccessor))
         {

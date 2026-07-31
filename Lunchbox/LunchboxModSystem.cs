@@ -15,6 +15,7 @@ public class LunchboxModSystem : ModSystem
 
         api.RegisterCollectibleBehaviorClass("Lunchbox.LunchboxBehaviour", typeof(CollectableBehaviorLunchbox));
         api.RegisterItemClass("Lunchbox.LunchboxItem", typeof(ItemLunchBox));
+        api.RegisterItemClass("Lunchbox.CoolerItem", typeof(ItemCooler));
     }
 
     private void TryToLoadConfig(ICoreAPI api)
