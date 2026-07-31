@@ -54,7 +54,7 @@ internal interface ILunchbox
         }
 
         ITreeAttribute hunger_tree = _player_entity.WatchedAttributes.GetTreeAttribute(HUNGER_KEY);
-        if (hunger_tree.GetFloat("currentsaturation") > (float) LunchboxModSystem.config.minimum_satiety)
+        if (hunger_tree.GetFloat("currentsaturation") > (float)LunchboxModSystem.config.minimum_satiety)
         {
             return;
         }
@@ -100,9 +100,14 @@ internal interface ILunchbox
     abstract ItemSlotBagContent? FindFirstEdibleSlot();
 
     /**
-     * \brief Retuns the first inventory slot within the lunchbox that contains edible items.
+     * \brief Returns the first inventory slot within the lunchbox that contains items with positive hydration values.
      */
-    public ItemSlotBagContent? FindFirstEdibleSlot(CollectableBehaviorLunchbox collectibleInterface)
+    abstract ItemSlotBagContent? FindFirstDrinkableSlot();
+
+    /**
+     * \brief Retuns the first inventory slot within the lunchbox that contains edible items matching the criteria function.
+     */
+    public ItemSlotBagContent? FindFirstValidSlot(CollectableBehaviorLunchbox collectibleInterface, System.Func<ItemSlot?, EntityPlayer?, IWorldAccessor?, bool> CriteriaFunction)
     {
         if (collectibleInterface == null)
         {
@@ -125,7 +130,7 @@ internal interface ILunchbox
             {
                 var container = item as BlockCookedContainerBase;
                 if (container.IsEmpty(slot.Itemstack)) { continue; }
-                if (!FoodItemUtility.HasNutritionInformation(slot, _player_entity, world)) { continue; }
+                if (!CriteriaFunction(slot, _player_entity, world)) { continue; }
 
                 cooked_container_slot = slot;
             }
@@ -133,14 +138,14 @@ internal interface ILunchbox
             // Meal Holding Container Check (ex. Bowls)
             if (meal_holding_container_slot == null && FoodItemUtility.IsMealHoldingContainer(slot))
             {
-                if (FoodItemUtility.HasNutritionInformation(slot, _player_entity, world)) { continue; }
+                if (CriteriaFunction(slot, _player_entity, world)) { continue; }
 
                 meal_holding_container_slot = slot;
             }
 
             // If our slot has nutrition information
             // This could also include cooked containers so let's make sure we don't select it
-            if (first_edible_slot == null && item is not BlockCookedContainerBase && FoodItemUtility.HasNutritionInformation(slot, _player_entity, world))
+            if (first_edible_slot == null && item is not BlockCookedContainerBase && CriteriaFunction(slot, _player_entity, world))
             {
                 first_edible_slot = slot;
             }
