@@ -20,6 +20,11 @@ public class ItemLunchBox : Item, ILunchbox
 
     public ItemSlotBagContent? FindFirstEdibleSlot()
     {
-        return ((ILunchbox)this).FindFirstEdibleSlot(GetCollectibleInterface<CollectableBehaviorLunchbox>());
+        return ((ILunchbox)this).FindFirstValidSlot(GetCollectibleInterface<CollectableBehaviorLunchbox>(), FoodItemUtility.HasNutritionInformation);
+    }
+
+    public ItemSlotBagContent? FindFirstDrinkableSlot()
+    {
+        return ((ILunchbox)this).FindFirstValidSlot(GetCollectibleInterface<CollectableBehaviorLunchbox>(), FoodItemUtility.HasHydrationInformation);
     }
 }

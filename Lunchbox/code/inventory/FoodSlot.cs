@@ -31,8 +31,9 @@ class FoodSlot : ItemSlotBagContent
         var player_entity = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
         var world = player_entity == null ? inventory.Api.World : player_entity.World;
         bool food_item_has_satiety = FoodItemUtility.HasNutritionInformation(source_slot, player_entity, world);
+        bool food_item_has_hydration = FoodItemUtility.HasHydrationInformation(source_slot, player_entity, world);
         bool is_meal_container = FoodItemUtility.IsMealContainer(source_slot);
 
-        return food_item_has_satiety || is_meal_container;
+        return food_item_has_satiety || food_item_has_hydration ||  is_meal_container;
     }
 }

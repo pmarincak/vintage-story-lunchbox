@@ -8,11 +8,13 @@ namespace Lunchbox
     public class Config
     {
         public double minimum_satiety = 15.0; //! Minimum satiety that the player has before the lunchbox auto-eats
+        public double minimum_thirst = 15.0; //! Minimum thirst that the player has before the lunchbox auto-drinks - hydrate or diedrate compatibility
 
         public void verify()
         {
             // 1% to 90%
             minimum_satiety = Math.Clamp(minimum_satiety, 15.0, 1350.0);
+            minimum_thirst = Math.Clamp(minimum_satiety, 15.0, 1350.0);
         }
     }
 }
