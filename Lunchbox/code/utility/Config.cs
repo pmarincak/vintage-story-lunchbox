@@ -10,6 +10,7 @@ namespace Lunchbox
         public double minimum_satiety = 15.0; //! Minimum satiety that the player has before the lunchbox auto-eats
         public double minimum_thirst = 15.0; //! Minimum thirst that the player has before the lunchbox auto-drinks - hydrate or diedrate compatibility
         public bool cooler_autoeat_enabled = true; //! Whether the cooler auto-eats or not. For people who want perishrate multipliers without auto-eating.
+        public bool temporal_backpack_autoeat_enabled = true; //! Whether the temporal backpack auto-eats or not. For people who want perishrate multipliers without auto-eating.
 
         public void verify()
         {

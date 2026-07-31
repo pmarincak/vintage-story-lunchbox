@@ -4,7 +4,7 @@
 		"general": [ "*" ],
 		"items": [ "*" ]
 	},
-	"class": "Lunchbox.LunchboxItem",
+	"class": "Lunchbox.TemporalBackpackItem",
 	"behaviors": [
 		{
 			"name": "GroundStorable",
