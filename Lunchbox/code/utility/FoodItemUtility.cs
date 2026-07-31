@@ -74,6 +74,45 @@ public static class FoodItemUtility
     {
         return IsMealContainer(slot) && slot?.Itemstack?.Collectible?.FirstCodePart().ToString() == "bowl";
     }
+
+    /**
+     * \brief Returns whether the \a slot in the \a player_entity's inventory contains hydration information or not.
+     * \note Hydrate or Diedrate Compatibility
+     */
+    public static bool HasHydrationInformation(ItemSlot? slot, EntityPlayer? player_entity, IWorldAccessor? world)
+    {
+        // Hydrate or Diedrate adds an item attribute called Hydration.
+        // Hydration can be negative, positive or zero.
+        // Only look for Hydratation Information that is positive since we are triggering this because we thirsty.
+
+        var item = slot?.Itemstack?.Collectible;
+        if (item == null)
+        {
+            return false;
+        }
+
+        var hydration = item.Attributes?["Hydration"].AsFloat();
+        if (hydration > 0.0f)
+        {
+            return true;
+        }
+
+        BlockContainer? block_container = item as BlockContainer;
+        if (block_container != null && world != null)
+        {
+            var contents = block_container.GetNonEmptyContents(world, slot?.Itemstack);
+
+            foreach (var i in contents)
+            {
+                if (i.ItemAttributes?["Hydration"].AsFloat() > 0.0f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
 
 
