@@ -23,6 +23,7 @@ public class LunchboxModSystem : ModSystem
     {
         if (api.Side != EnumAppSide.Server)
         {
+            config = new Config();
             return;
         }
 
