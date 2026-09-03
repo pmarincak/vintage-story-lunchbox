@@ -3,7 +3,7 @@
   "ingredients": {
     "I": {
       "type": "block",
-      "code": "game:glacierice",
+      "code": "game:{ice}",
       "quantity": 3
     },
     "G": {
@@ -25,7 +25,8 @@
     }
   },
   "allowedVariants": {
-    "metal": [ "zinc", "tin" ]
+    "metal": [ "zinc", "tin" ],
+    "ice": [ "glacierice", "ice-glacier" ]
   },
   "width": 3,
   "height": 3,
