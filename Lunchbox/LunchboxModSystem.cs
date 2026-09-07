@@ -1,11 +1,13 @@
 ﻿using System;
 using Vintagestory.API.Common;
+using Vintagestory.API.Server;
 
 namespace Lunchbox;
 
 public class LunchboxModSystem : ModSystem
 {
     public static Config config { get; private set; } = null!;
+    private static ILogger? logger;
 
     public override void Start(ICoreAPI api)
     {
@@ -17,6 +19,14 @@ public class LunchboxModSystem : ModSystem
         api.RegisterItemClass("Lunchbox.LunchboxItem", typeof(ItemLunchBox));
         api.RegisterItemClass("Lunchbox.CoolerItem", typeof(ItemCooler));
         api.RegisterItemClass("Lunchbox.TemporalBackpackItem", typeof(ItemTemporalBackpack));
+
+    }
+
+    public override void StartServerSide(ICoreServerAPI api)
+    {
+        base.StartServerSide(api);
+
+        logger = Mod?.Logger;
     }
 
     private void TryToLoadConfig(ICoreAPI api)
@@ -46,6 +56,23 @@ public class LunchboxModSystem : ModSystem
             Mod.Logger.Error("Could not load config! Loading default settings instead.");
             Mod.Logger.Error(e);
             config = new Config();
+        }
+    }
+
+    public static void Log(String message)
+    {
+        logger?.Debug(message);
+    }
+
+    public static void Log(EntityPlayer? player, String message)
+    {
+        if (player == null)
+        {
+            Log(message);
+        }
+        else
+        {
+            Log("[" + player.GetName() + "] " + message);
         }
     }
 }

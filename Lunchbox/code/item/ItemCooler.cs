@@ -4,8 +4,7 @@ namespace Lunchbox;
 
 public class ItemCooler : ItemLunchBox
 {
-    public override void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory)
-    {
-        ((ILunchbox)this).ConfigureAutoEat(world, inventory, LunchboxModSystem.config.cooler_autoeat_enabled);
+    public ItemCooler() : base() {
+        auto_eat_enabled = LunchboxModSystem.config.cooler_autoeat_enabled;
     }
 }

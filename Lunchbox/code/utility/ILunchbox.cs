@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
@@ -11,24 +7,45 @@ using Vintagestory.GameContent;
 
 namespace Lunchbox;
 
-internal interface ILunchbox
+public class ILunchbox : Item
 {
-    static private string HUNGER_KEY = "hunger"; //! Key for hunger-related statistics for the player
-    static private string THIRST_KEY = "thirst"; //! Key for thirst-related statistics for the player. Hydrate or Diedrate compatibility.
-    EntityPlayer? _player_entity { get; set; } //! Player entity that has the lunchbox equiped. If null then the box is not equipped.
+    protected bool auto_eat_enabled = true; //! Whether to allow auto-eat or not for Lunchbox instances. Sub-classes should override.
+
+    // ITEM OVERRIDES
 
     /**
-     * \brief Configures auto-eat functionality for this lunchbox provided the \a world and the \a inventory the lunchbox resides in.
+    * \brief Called when the item changes inventory slots.
+    */
+    public override void OnModifiedInInventorySlot(IWorldAccessor world, ItemSlot slot, ItemStack extractedStack)
+    {
+       if (!(world is IServerWorldAccessor) || slot == null || slot.Itemstack == null) return;
+
+       ConfigureAutoEat(world, slot.Itemstack, GetLunchboxData(slot.Itemstack));
+    }
+
+    // LUNCHBOX CONFIGURATION
+
+    public LunchboxData GetLunchboxData(ItemStack lunchbox)
+    {
+        var behaviour = GetCollectibleInterface<CollectableBehaviorLunchbox>();
+        return behaviour.GetLunchboxData(lunchbox);
+    }
+
+    /**
+     * \brief Configures auto-eat functionality for this \p lunchbox provided the \p world and the \p inventory the lunchbox resides in.
      * \note Assumes that the inventory contains this lunchbox.
      */
-    abstract void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory);
+    public void ConfigureAutoEat(IWorldAccessor world, ItemStack lunchbox, LunchboxData data)
+    {
+        ConfigureAutoEat(world, lunchbox, data, auto_eat_enabled);
+    }
 
     /**
      * \brief Configures auto-eat functionality for this lunchbox provided the \a world and the \a inventory the lunchbox resides in.
      * \note Assumes that the inventory contains this lunchbox.
      * \note If enabled is false then autoeat will not be configured.
      */
-    public void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory, bool enabled)
+    public void ConfigureAutoEat(IWorldAccessor world, ItemStack lunchbox, LunchboxData data, bool enabled)
     {
         if (!enabled)
         {
@@ -41,38 +58,36 @@ internal interface ILunchbox
             return;
         }
 
-        var next_player_entity = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
-
-        // On Multiplayer servers the backpack is still associated with a player entity
-        // When a user logs off and back on the entity has the same IDs
-        // However the watched attributes have been cleared so we need to reapply even if it's the same
-
-        _player_entity?.WatchedAttributes.UnregisterListener(OnHungerChanged);
-        _player_entity?.WatchedAttributes.UnregisterListener(OnThirstChanged);
-        _player_entity = next_player_entity;
-        _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
-        _player_entity?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
     }
 
     /**
      * \brief Called when hunger-related statistics are changed. If the current satiety is less than the minimum then auto-eat from the lunchbox inventory.
      */
-    private void OnHungerChanged()
+    public void OnHungerChanged(LunchboxData data)
     {
+        var player = data.GetPlayerEntity();
         // Shouldn't happen but just in case
-        if (_player_entity == null)
+        if (player == null)
         {
             return;
         }
 
-        ITreeAttribute hunger_tree = _player_entity.WatchedAttributes.GetTreeAttribute(HUNGER_KEY);
+        ITreeAttribute hunger_tree = player.WatchedAttributes.GetTreeAttribute(LunchboxData.HUNGER_KEY);
+        var currentsaturation = hunger_tree.GetFloat("currentsaturation");
         if (hunger_tree.GetFloat("currentsaturation") > (float)LunchboxModSystem.config.minimum_satiety)
         {
             return;
         }
 
-        var edible_slot = FindFirstEdibleSlot();
-        ConsumeItem(edible_slot);
+        var edible_slot = FindFirstEdibleSlot(data);
+        ConsumeItem(edible_slot, data.GetPlayerEntity());
+
+        if (edible_slot != null)
+        {
+            var currentsaturation_new = hunger_tree.GetFloat("currentsaturation");
+            LunchboxModSystem.Log(player, "Saturation change from [" + currentsaturation + "] to [" + currentsaturation_new + "]");
+            LunchboxModSystem.Log(player, "Edible slot changed [" + edible_slot.BagIndex + "][" + edible_slot.SlotIndex + "][" + edible_slot.Itemstack?.ToString() + "]");
+        }
     }
 
     /**
@@ -80,7 +95,7 @@ internal interface ILunchbox
      */
     private void OnThirstChanged()
     {
-        // Shouldn't happen but just in case
+       /* // Shouldn't happen but just in case
         if (_player_entity == null)
         {
             return;
@@ -93,45 +108,54 @@ internal interface ILunchbox
         }
 
         var drinkable_slot = FindFirstDrinkableSlot();
-        ConsumeItem(drinkable_slot);
+        ConsumeItem(drinkable_slot);*/
     }
 
     /**
      * \brief Attempts to consume the food item located in the \a slot.
      */
-    private void ConsumeItem(ItemSlotBagContent? slot)
+    private void ConsumeItem(ItemSlotBagContent? slot, EntityPlayer? player)
     {
         const float minimum_seconds = 2; // In order for eating to occur for meals they must have been munched on for at least 2 seconds. The lunchbox fakes this and does it instantly.
         var item = slot?.Itemstack?.Collectible;
-        item?.OnHeldInteractStop(minimum_seconds, slot, _player_entity, null, null);
+        item?.OnHeldInteractStop(minimum_seconds, slot, player, null, null);
     }
+
+    // AUTO EAT SEARCH
 
     /**
      * \brief Returns the first inventory slot within the lunchbox that contains items with positive satiety values.
      */
-    abstract ItemSlotBagContent? FindFirstEdibleSlot();
+    private ItemSlotBagContent? FindFirstEdibleSlot(LunchboxData data)
+    {
+        return FindFirstValidSlot(data, FoodItemUtility.HasNutritionInformation); 
+    }
 
     /**
      * \brief Returns the first inventory slot within the lunchbox that contains items with positive hydration values.
      */
-    abstract ItemSlotBagContent? FindFirstDrinkableSlot();
+    private ItemSlotBagContent? FindFirstDrinkableSlot(LunchboxData data) {
+        return FindFirstValidSlot(data, FoodItemUtility.HasHydrationInformation);
+    }
 
     /**
      * \brief Retuns the first inventory slot within the lunchbox that contains edible items matching the criteria function.
      */
-    public ItemSlotBagContent? FindFirstValidSlot(CollectableBehaviorLunchbox collectibleInterface, System.Func<ItemSlot?, EntityPlayer?, IWorldAccessor?, bool> CriteriaFunction)
+    private ItemSlotBagContent? FindFirstValidSlot(LunchboxData data, System.Func<ItemSlot?, EntityPlayer?, IWorldAccessor?, bool> CriteriaFunction)
     {
-        if (collectibleInterface == null)
+        var contents = data.GetSlots();
+
+        if (contents == null)
         {
             return null;
         }
 
-        var contents = collectibleInterface._slots;
-
+        var player = data.GetPlayerEntity();
+       
         ItemSlotBagContent? cooked_container_slot = null;
         ItemSlotBagContent? meal_holding_container_slot = null;
         ItemSlotBagContent? first_edible_slot = null;
-        var world = _player_entity?.World;
+        var world = player?.World;
         foreach (ItemSlotBagContent? slot in contents)
         {
             if (slot == null) { continue; }
@@ -142,7 +166,7 @@ internal interface ILunchbox
             {
                 var container = item as BlockCookedContainerBase;
                 if (container.IsEmpty(slot.Itemstack)) { continue; }
-                if (!CriteriaFunction(slot, _player_entity, world)) { continue; }
+                if (!CriteriaFunction(slot, player, world)) { continue; }
 
                 cooked_container_slot = slot;
             }
@@ -150,14 +174,14 @@ internal interface ILunchbox
             // Meal Holding Container Check (ex. Bowls)
             if (meal_holding_container_slot == null && FoodItemUtility.IsMealHoldingContainer(slot))
             {
-                if (CriteriaFunction(slot, _player_entity, world)) { continue; }
+                if (CriteriaFunction(slot, player, world)) { continue; }
 
                 meal_holding_container_slot = slot;
             }
 
             // If our slot has nutrition information
             // This could also include cooked containers so let's make sure we don't select it
-            if (first_edible_slot == null && item is not BlockCookedContainerBase && CriteriaFunction(slot, _player_entity, world))
+            if (first_edible_slot == null && item is not BlockCookedContainerBase && CriteriaFunction(slot, player, world))
             {
                 first_edible_slot = slot;
             }

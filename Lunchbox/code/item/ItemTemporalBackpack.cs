@@ -4,8 +4,8 @@ namespace Lunchbox;
 
 public class ItemTemporalBackpack : ItemLunchBox
 {
-    public override void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory)
+    public ItemTemporalBackpack() : base()
     {
-        ((ILunchbox)this).ConfigureAutoEat(world, inventory, LunchboxModSystem.config.temporal_backpack_autoeat_enabled);
+        auto_eat_enabled = LunchboxModSystem.config.temporal_backpack_autoeat_enabled;
     }
 }
