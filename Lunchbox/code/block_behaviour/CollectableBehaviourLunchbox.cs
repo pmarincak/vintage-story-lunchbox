@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -16,12 +17,17 @@ namespace Lunchbox;
 
 class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 {
+    private static string LUNCHBOX_BEHAVIOUR_ID = "lunchbox_behaviour_guid";
+
     // Generic
+    private string _behaviour_guid = "";
     private Dictionary<string, LunchboxData> _server_lunchbox_tracking = new Dictionary<string, LunchboxData>();
     private Type _slot_type;
+    private float _spoilage_modifier = 1.0f;
 
     public CollectableBehaviorLunchbox(CollectibleObject obj) : base(obj)
     {
+        _behaviour_guid = Guid.NewGuid().ToString();
     }
 
     public override void Initialize(JsonObject properties)
@@ -50,16 +56,21 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     {
         base.Store(bagstack, slot);
 
-        var data = GetLunchboxData(bagstack);
-        data.AddTemporaryLunchboxID(slot?.Itemstack);
+        AddTemporaryLunchboxID(slot?.Itemstack);
     }
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
-        var perish_rate = SpoilageUtility.GetSpoilageRateMul(inSlot.Itemstack?.Collectible);
+        // Spoilage Rates are set onto the object we provide a behaviour for
+        // Each object has an instance of a Collectable Behaviour
+        // We will cache the spoilage rate from the object we modify for later use
+        // This value isn't being displayed to the user in the menu
+        // For some reason it isn't set properly in the constructor
+        // Quick Hack
+        _spoilage_modifier = SpoilageUtility.GetSpoilageRateMul(inSlot?.Itemstack?.Collectible);
 
         // This info technically lives on the Lunchbox but the order looks strange so we'll put it here
-        dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(perish_rate, 2)));
+        dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(_spoilage_modifier, 2)));
     }
 
     public LunchboxData GetLunchboxData(ItemStack lunchbox)
@@ -75,6 +86,10 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
      */
     public new List<ItemSlotBagContent> GetOrCreateSlots(ItemStack bagstack, InventoryBase parentinv, int bagIndex, IWorldAccessor world)
     {
+        // If we don't assign this here Perish Mult won't work :(
+        // May work in some other hook but for now it lives here
+        _spoilage_modifier = SpoilageUtility.GetSpoilageRateMul(bagstack?.Collectible);
+
         var bagContents = new List<ItemSlotBagContent>();
 
         string bgcolhex = GetSlotBgColor(bagstack);
@@ -117,6 +132,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
                 while (bagContents.Count <= slotIndex) bagContents.Add(null);
                 bagContents[slotIndex] = slot;
+                AddTemporaryLunchboxID(slot.Itemstack);
             }
         }
 
@@ -125,18 +141,13 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
          * Cache the bagContents before we return because otherwise we cannot access the created slots 
          * for the lunchbox implementation without recreating the slots and we want them to match
          */
-        ConfigureAutoEat(world, bagstack, parentinv, bagContents);
+        ConfigureAutoEat(bagstack, parentinv, bagContents);
 
         return bagContents;
     }
 
-    public void ConfigureAutoEat(IWorldAccessor world, ItemStack lunchbox, InventoryBase inventory, List<ItemSlotBagContent> bagContents)
+    public void ConfigureAutoEat(ItemStack lunchbox, InventoryBase inventory, List<ItemSlotBagContent> bagContents)
     {
-        if (!(world is IServerWorldAccessor))
-        {
-           return;
-        }
-
         // Get the GUID or Assign if not exists
         var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, null);
         if (guid == null)
@@ -159,5 +170,26 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         var data = _server_lunchbox_tracking[guid];
         data.UpdateData(lunchbox, inventory, bagContents);
         _server_lunchbox_tracking[guid] = data;
+    }
+
+    /**
+    * \brief Returns a transition speed modification.
+    */
+    public float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
+    {
+        // If it's invalid skip
+        if (transType != EnumTransitionType.Perish) return 1;
+        if (stack == null || stack.Collectible == null) return 1;
+
+        // If it's not in this Lunchbox skip
+         if (stack.TempAttributes.GetString(LUNCHBOX_BEHAVIOUR_ID, "") != _behaviour_guid) return 1;
+
+        // No support for per-food-category perish rate yet
+        return baseMul * _spoilage_modifier;
+    }
+
+    public void AddTemporaryLunchboxID(ItemStack? item)
+    {
+        item?.TempAttributes.SetString(LUNCHBOX_BEHAVIOUR_ID, _behaviour_guid);
     }
 }

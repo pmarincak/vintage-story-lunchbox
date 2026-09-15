@@ -12,12 +12,12 @@ public class ILunchbox : Item
     */
     public override void OnModifiedInInventorySlot(IWorldAccessor world, ItemSlot slot, ItemStack extractedStack)
     {
-       if (!(world is IServerWorldAccessor) || slot == null || slot.Itemstack == null) return;
+       if (slot == null || slot.Itemstack == null) return;
 
         var behaviour = GetCollectibleInterface<CollectableBehaviorLunchbox>();
         var data = behaviour.GetLunchboxData(slot.Itemstack);
 
-        behaviour.ConfigureAutoEat(world, slot.Itemstack, slot.Inventory, data.GetSlots());
+        behaviour.ConfigureAutoEat(slot.Itemstack, slot.Inventory, data.GetSlots());
     }
 }
 

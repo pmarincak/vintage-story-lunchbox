@@ -13,7 +13,7 @@ public class LunchboxData
     static public string LUNCHBOX_ID = "lunchbox_guid";
 
     private EntityPlayer? _player_entity = null; //! Player entity that has the lunchbox equipped. If null then the box is not equipped.
-    private InventoryBase? _inventory = null;
+    public InventoryBase? _inventory = null;
     private List<ItemSlotBagContent> _slots = new List<ItemSlotBagContent>();
     private ILunchbox? _lunchbox = null;
     private string _id = "";
@@ -89,34 +89,19 @@ public class LunchboxData
 
     private void SetInventory(InventoryBase? inventory)
     {
-        if (_inventory != null)
+        var behaviour = _lunchbox?.GetBehavior<CollectableBehaviorLunchbox>();
+
+        if (_inventory != null && behaviour != null)
         {
-            _inventory.OnAcquireTransitionSpeed -= Inventory_OnAcquireTransitionSpeed;
+            _inventory.OnAcquireTransitionSpeed -= behaviour.Inventory_OnAcquireTransitionSpeed;
         }
 
         _inventory = inventory;
 
-        if (_inventory != null)
+        if (_inventory != null && behaviour != null)
         {
-            _inventory.OnAcquireTransitionSpeed += Inventory_OnAcquireTransitionSpeed;
+            _inventory.OnAcquireTransitionSpeed += behaviour.Inventory_OnAcquireTransitionSpeed;
         }
-    }
-
-    /**
-    * \brief Returns a transition speed modification.
-    */
-    private float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
-    {
-        // If it's invalid skip
-        if (transType != EnumTransitionType.Perish) return 1;
-        if (stack == null || stack.Collectible == null) return 1;
-
-        // If it's not in this Lunchbox skip
-        if (_lunchbox == null) return 1;
-        if (stack.TempAttributes.GetString(LUNCHBOX_ID, "") != _id) return 1;
-
-        // No support for per-food-category perish rate yet
-        return baseMul * SpoilageUtility.GetSpoilageRateMul(_lunchbox);
     }
 
     private void SetSlots(List<ItemSlotBagContent> slots)
@@ -129,16 +114,11 @@ public class LunchboxData
          * We need to flag that this item we've added to the slot belongs to a Lunchbox
          * Whether we tick for spoilage depends on if we have any Multipliers to apply
          */
-
+        var behaviour = _lunchbox?.GetBehavior<CollectableBehaviorLunchbox>();
         foreach (ItemSlotBagContent slot in _slots)
         {
-            AddTemporaryLunchboxID(slot.Itemstack);
+            behaviour?.AddTemporaryLunchboxID(slot.Itemstack);
         }
-    }
-
-    public void AddTemporaryLunchboxID(ItemStack? item)
-    {
-        item?.TempAttributes.SetString(LUNCHBOX_ID, _id);
     }
 
     public List<ItemSlotBagContent> GetSlots()
