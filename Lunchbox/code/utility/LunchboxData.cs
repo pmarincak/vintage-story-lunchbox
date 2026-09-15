@@ -132,8 +132,13 @@ public class LunchboxData
 
         foreach (ItemSlotBagContent slot in _slots)
         {
-            slot.Itemstack?.TempAttributes.SetString(LUNCHBOX_ID, _id);
+            AddTemporaryLunchboxID(slot.Itemstack);
         }
+    }
+
+    public void AddTemporaryLunchboxID(ItemStack? item)
+    {
+        item?.TempAttributes.SetString(LUNCHBOX_ID, _id);
     }
 
     public List<ItemSlotBagContent> GetSlots()

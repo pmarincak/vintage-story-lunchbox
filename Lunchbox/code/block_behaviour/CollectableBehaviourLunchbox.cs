@@ -46,6 +46,14 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         }
     }
 
+    public new void Store(ItemStack bagstack, ItemSlotBagContent slot)
+    {
+        base.Store(bagstack, slot);
+
+        var data = GetLunchboxData(bagstack);
+        data.AddTemporaryLunchboxID(slot?.Itemstack);
+    }
+
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         var perish_rate = SpoilageUtility.GetSpoilageRateMul(inSlot.Itemstack?.Collectible);
@@ -57,7 +65,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     public LunchboxData GetLunchboxData(ItemStack lunchbox)
     {
         var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, null);
-        var data = _server_lunchbox_tracking.Get(guid);
+        var data = _server_lunchbox_tracking.Get(guid, new LunchboxData(""));
         return data;
     }
 
@@ -126,7 +134,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     {
         if (!(world is IServerWorldAccessor))
         {
-            return;
+           return;
         }
 
         // Get the GUID or Assign if not exists
