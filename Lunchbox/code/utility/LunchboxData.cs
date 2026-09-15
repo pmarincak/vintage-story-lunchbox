@@ -52,12 +52,12 @@ public class LunchboxData
         var new_entity_name = player != null ? player.GetName() : "null";
 
         _player_entity?.WatchedAttributes.UnregisterListener(OnHungerChanged);
-        //_player_entity?.WatchedAttributes.UnregisterListener(OnThirstChanged);
+        _player_entity?.WatchedAttributes.UnregisterListener(OnThirstChanged);
 
         _player_entity = player;
 
         _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
-        //player?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
+        player?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
 
         LunchboxModSystem.Log("Changing Player Entity from [" + old_entity_name + "] to [" + new_entity_name + "]");
     }
@@ -70,6 +70,11 @@ public class LunchboxData
     private void OnHungerChanged()
     {
         _lunchbox?.OnHungerChanged(this);
+    }
+
+    private void OnThirstChanged()
+    {
+        _lunchbox?.OnThirstChanged(this);
     }
 
     public EntityPlayer? GetPlayerEntity()

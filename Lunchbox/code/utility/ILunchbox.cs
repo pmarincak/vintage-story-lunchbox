@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Vintagestory.API.Common;
+﻿using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -39,8 +37,8 @@ public class ILunchbox : Item
         }
 
         ITreeAttribute hunger_tree = player.WatchedAttributes.GetTreeAttribute(LunchboxData.HUNGER_KEY);
-        var currentsaturation = hunger_tree.GetFloat("currentsaturation");
-        if (hunger_tree.GetFloat("currentsaturation") > (float)LunchboxModSystem.config.minimum_satiety)
+        var current_old = hunger_tree.GetFloat("currentsaturation");
+        if (current_old > (float)LunchboxModSystem.config.minimum_satiety)
         {
             return;
         }
@@ -48,10 +46,10 @@ public class ILunchbox : Item
         var edible_slot = FindFirstEdibleSlot(data);
         if (edible_slot != null)
         {
-            ConsumeItem(edible_slot, data.GetPlayerEntity());
+            ConsumeItem(edible_slot, player);
 
-            var currentsaturation_new = hunger_tree.GetFloat("currentsaturation");
-            LunchboxModSystem.Log(player, "Saturation change from [" + currentsaturation + "] to [" + currentsaturation_new + "]");
+            var current_new = hunger_tree.GetFloat("currentsaturation");
+            LunchboxModSystem.Log(player, "Saturation change from [" + current_old + "] to [" + current_new + "]");
             LunchboxModSystem.Log(player, "Edible slot changed [" + edible_slot.BagIndex + "][" + edible_slot.SlotIndex + "][" + edible_slot.Itemstack?.ToString() + "]");
         }
     }
@@ -59,22 +57,32 @@ public class ILunchbox : Item
     /**
      * \brief Called when thirst-related statistics are changed. If the current thirst is less than the minimum then auto-eat from the lunchbox inventory.
      */
-    private void OnThirstChanged()
+    public void OnThirstChanged(LunchboxData data)
     {
-       /* // Shouldn't happen but just in case
-        if (_player_entity == null)
+        var player = data.GetPlayerEntity();
+        // Shouldn't happen but just in case
+        if (player == null)
         {
             return;
         }
 
-        ITreeAttribute thirst_tree = _player_entity.WatchedAttributes.GetTreeAttribute(THIRST_KEY);
-        if (thirst_tree.GetFloat("currentThirst") > (float)LunchboxModSystem.config.minimum_thirst)
+        ITreeAttribute thirst_tree = player.WatchedAttributes.GetTreeAttribute(LunchboxData.THIRST_KEY);
+        var current_old = thirst_tree.GetFloat("currentThirst");
+        if (current_old > (float)LunchboxModSystem.config.minimum_thirst)
         {
             return;
         }
 
-        var drinkable_slot = FindFirstDrinkableSlot();
-        ConsumeItem(drinkable_slot);*/
+        var drinkable_slot = FindFirstDrinkableSlot(data);
+
+        if (drinkable_slot != null)
+        {
+            ConsumeItem(drinkable_slot, player);
+
+            var current_new = thirst_tree.GetFloat("currentThirst");
+            LunchboxModSystem.Log(player, "Thirst change from [" + current_old + "] to [" + current_new + "]");
+            LunchboxModSystem.Log(player, "Edible slot changed [" + drinkable_slot.BagIndex + "][" + drinkable_slot.SlotIndex + "][" + drinkable_slot.Itemstack?.ToString() + "]");
+        }
     }
 
     /**
