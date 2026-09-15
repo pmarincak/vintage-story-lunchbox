@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Lunchbox;
 
-public struct LunchboxData
+public class LunchboxData
 {
     static public string HUNGER_KEY = "hunger"; //! Key for hunger-related statistics for the player
     static public string THIRST_KEY = "thirst"; //! Key for thirst-related statistics for the player. Hydrate or Diedrate compatibility.
@@ -14,15 +15,28 @@ public struct LunchboxData
     private InventoryBase? _inventory = null;
     private List<ItemSlotBagContent> _slots = new List<ItemSlotBagContent>();
     private ILunchbox? _lunchbox = null;
+    private string _id = "";
 
-    public LunchboxData() {}
+    public LunchboxData(string guid) {
+        _id = guid;
+    }
+
+    public static bool operator!= (LunchboxData a, LunchboxData b)
+    {
+        return a._id != b._id;
+    }
+
+    public static bool operator == (LunchboxData a, LunchboxData b)
+    {
+        return a._id == b._id;
+    }
 
     public void UpdateData(ItemStack lunchbox, InventoryBase inventory, List<ItemSlotBagContent> bagContents)
     {
         var player = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
 
-        SetLunchbox((ILunchbox) lunchbox.Collectible);
         SetPlayerEntity(player);
+        SetLunchbox((ILunchbox) lunchbox.Collectible);
         SetInventory(inventory);
 
         /*
@@ -42,7 +56,7 @@ public struct LunchboxData
 
         _player_entity = player;
 
-        player?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
+        _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
         //player?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
 
         LunchboxModSystem.Log("Changing Player Entity from [" + old_entity_name + "] to [" + new_entity_name + "]");

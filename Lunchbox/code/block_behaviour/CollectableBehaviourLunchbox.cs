@@ -140,7 +140,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         if (!_server_lunchbox_tracking.ContainsKey(guid))
         {
             LunchboxModSystem.Log("Adding Lunchbox Tracking for [" + lunchbox.GetName() + "-" + guid + "]");
-            _server_lunchbox_tracking.Add(guid, new LunchboxData());
+            _server_lunchbox_tracking.Add(guid, new LunchboxData(guid));
         }
 
         // Update the tracking data
