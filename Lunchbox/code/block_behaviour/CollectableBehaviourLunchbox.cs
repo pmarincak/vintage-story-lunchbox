@@ -48,7 +48,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
-        var perish_rate = SpoilageUtility.GetSpoilageRateMul(inSlot.Itemstack);
+        var perish_rate = SpoilageUtility.GetSpoilageRateMul(inSlot.Itemstack?.Collectible);
 
         // This info technically lives on the Lunchbox but the order looks strange so we'll put it here
         dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(perish_rate, 2)));
@@ -113,6 +113,10 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         }
 
         // Registers the tracking for the Lunchbox and configures the auto eat functionality if necessary
+        /*
+         * Cache the bagContents before we return because otherwise we cannot access the created slots 
+         * for the lunchbox implementation without recreating the slots and we want them to match
+         */
         ConfigureAutoEat(world, bagstack, parentinv, bagContents);
 
         return bagContents;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -38,16 +39,12 @@ public class LunchboxData
         SetPlayerEntity(player);
         SetLunchbox((ILunchbox) lunchbox.Collectible);
         SetInventory(inventory);
-
-        /*
-         * Cache the bagContents before we return because otherwise we cannot access the created slots 
-         * for the lunchbox implementation without recreating the slots and we want them to match
-         */
         SetSlots(bagContents);
     }
 
     private void SetPlayerEntity(EntityPlayer? player)
     {
+        var same = player == _player_entity;
         var old_entity_name = _player_entity != null ? _player_entity.GetName() : "null";
         var new_entity_name = player != null ? player.GetName() : "null";
 
@@ -59,7 +56,11 @@ public class LunchboxData
         _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
         player?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
 
-        LunchboxModSystem.Log("Changing Player Entity from [" + old_entity_name + "] to [" + new_entity_name + "]");
+        // We'll update because it's easier to keep everything up to date with the other objects but we'll only log when it changes for server owners
+        if (!same)
+        {
+            LunchboxModSystem.Log("Changing Player Entity from [" + old_entity_name + "] to [" + new_entity_name + "]");
+        }
     }
 
     private void SetLunchbox(ILunchbox? lunchbox)
@@ -90,20 +91,49 @@ public class LunchboxData
     {
         if (_inventory != null)
         {
-            _inventory.OnAcquireTransitionSpeed -= SpoilageUtility.Inventory_OnAcquireTransitionSpeed;
+            _inventory.OnAcquireTransitionSpeed -= Inventory_OnAcquireTransitionSpeed;
         }
 
         _inventory = inventory;
 
         if (_inventory != null)
         {
-            _inventory.OnAcquireTransitionSpeed += SpoilageUtility.Inventory_OnAcquireTransitionSpeed;
+            _inventory.OnAcquireTransitionSpeed += Inventory_OnAcquireTransitionSpeed;
         }
+    }
+
+    /**
+    * \brief Returns a transition speed modification.
+    */
+    private float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
+    {
+        // If it's invalid skip
+        if (transType != EnumTransitionType.Perish) return 1;
+        if (stack == null || stack.Collectible == null) return 1;
+
+        // If it's not in this Lunchbox skip
+        if (_lunchbox == null) return 1;
+        if (stack.TempAttributes.GetString(LUNCHBOX_ID, "") != _id) return 1;
+
+        // No support for per-food-category perish rate yet
+        return baseMul * SpoilageUtility.GetSpoilageRateMul(_lunchbox);
     }
 
     private void SetSlots(List<ItemSlotBagContent> slots)
     {
+
         _slots = slots;
+
+        /* 
+         * All backpacks share the same inventory
+         * We need to flag that this item we've added to the slot belongs to a Lunchbox
+         * Whether we tick for spoilage depends on if we have any Multipliers to apply
+         */
+
+        foreach (ItemSlotBagContent slot in _slots)
+        {
+            slot.Itemstack?.TempAttributes.SetString(LUNCHBOX_ID, _id);
+        }
     }
 
     public List<ItemSlotBagContent> GetSlots()
