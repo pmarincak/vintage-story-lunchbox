@@ -20,44 +20,10 @@ public class ILunchbox : Item
     {
        if (!(world is IServerWorldAccessor) || slot == null || slot.Itemstack == null) return;
 
-       ConfigureAutoEat(world, slot.Itemstack, GetLunchboxData(slot.Itemstack));
-    }
-
-    // LUNCHBOX CONFIGURATION
-
-    public LunchboxData GetLunchboxData(ItemStack lunchbox)
-    {
         var behaviour = GetCollectibleInterface<CollectableBehaviorLunchbox>();
-        return behaviour.GetLunchboxData(lunchbox);
-    }
+        var data = behaviour.GetLunchboxData(slot.Itemstack);
 
-    /**
-     * \brief Configures auto-eat functionality for this \p lunchbox provided the \p world and the \p inventory the lunchbox resides in.
-     * \note Assumes that the inventory contains this lunchbox.
-     */
-    public void ConfigureAutoEat(IWorldAccessor world, ItemStack lunchbox, LunchboxData data)
-    {
-        ConfigureAutoEat(world, lunchbox, data, auto_eat_enabled);
-    }
-
-    /**
-     * \brief Configures auto-eat functionality for this lunchbox provided the \a world and the \a inventory the lunchbox resides in.
-     * \note Assumes that the inventory contains this lunchbox.
-     * \note If enabled is false then autoeat will not be configured.
-     */
-    public void ConfigureAutoEat(IWorldAccessor world, ItemStack lunchbox, LunchboxData data, bool enabled)
-    {
-        if (!enabled)
-        {
-            return;
-        }
-
-        // If the world is not server-side then auto-eat functionality will fail
-        if (!(world is IServerWorldAccessor))
-        {
-            return;
-        }
-
+        behaviour.ConfigureAutoEat(world, slot.Itemstack, slot.Inventory, data.GetSlots());
     }
 
     /**
@@ -80,10 +46,10 @@ public class ILunchbox : Item
         }
 
         var edible_slot = FindFirstEdibleSlot(data);
-        ConsumeItem(edible_slot, data.GetPlayerEntity());
-
         if (edible_slot != null)
         {
+            ConsumeItem(edible_slot, data.GetPlayerEntity());
+
             var currentsaturation_new = hunger_tree.GetFloat("currentsaturation");
             LunchboxModSystem.Log(player, "Saturation change from [" + currentsaturation + "] to [" + currentsaturation_new + "]");
             LunchboxModSystem.Log(player, "Edible slot changed [" + edible_slot.BagIndex + "][" + edible_slot.SlotIndex + "][" + edible_slot.Itemstack?.ToString() + "]");
