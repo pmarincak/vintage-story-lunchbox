@@ -69,12 +69,16 @@ public class LunchboxData
 
     private void OnHungerChanged()
     {
-        _lunchbox?.OnHungerChanged(this);
+        if (_lunchbox == null ||  _player_entity == null || _inventory == null || _slots.Count == 0) return;
+
+        AutoEatUtility.OnHungerChanged(this);
     }
 
     private void OnThirstChanged()
     {
-        _lunchbox?.OnThirstChanged(this);
+        if (_lunchbox == null || _player_entity == null || _inventory == null || _slots.Count == 0) return;
+
+        AutoEatUtility.OnThirstChanged(this);
     }
 
     public EntityPlayer? GetPlayerEntity()
