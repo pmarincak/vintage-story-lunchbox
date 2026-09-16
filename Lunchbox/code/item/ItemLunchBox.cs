@@ -1,9 +1,11 @@
-using System.Collections.Generic;
-using Vintagestory.API.Common;
-using Vintagestory.API.Server;
+using Lunchbox.code.item;
 
 namespace Lunchbox;
 
 public class ItemLunchBox : ILunchbox
 {
+    public ItemLunchBox() : base()
+    {
+        auto_eat_enabled = true;
+    }
 }

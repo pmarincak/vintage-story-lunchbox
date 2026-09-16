@@ -1,10 +1,11 @@
-﻿using Vintagestory.API.Common;
+﻿using Lunchbox.code.item;
 
 namespace Lunchbox;
 
-public class ItemCooler : ItemLunchBox
+public class ItemCooler : ILunchbox
 {
-    public ItemCooler() : base() {
+    public ItemCooler() : base() 
+    {
         auto_eat_enabled = LunchboxModSystem.config.cooler_autoeat_enabled;
     }
 }

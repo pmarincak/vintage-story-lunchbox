@@ -1,8 +1,8 @@
-﻿using Vintagestory.API.Common;
+﻿using Lunchbox.code.item;
 
 namespace Lunchbox;
 
-public class ItemTemporalBackpack : ItemLunchBox
+public class ItemTemporalBackpack : ILunchbox
 {
     public ItemTemporalBackpack() : base()
     {
