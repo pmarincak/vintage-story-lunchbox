@@ -28,6 +28,11 @@ public class LunchboxModSystem : ModSystem
         logger = Mod?.Logger;
     }
 
+    /**
+     * \brief Tries to load the mod config.
+     * \note If the configuration file does not exist it will create a new file.
+     * \note On the server the newly created file will be saved.
+     */
     private void TryToLoadConfig(ICoreAPI api)
     {
         if (api.Side != EnumAppSide.Server)
@@ -58,14 +63,20 @@ public class LunchboxModSystem : ModSystem
         }
     }
 
+    /**
+     * \brief Prints the \p message to the server debug log.
+     */
     public static void Log(String message)
     {
         if (config.enable_logger)
         {
-            logger?.VerboseDebug(message);
+            logger?.Debug(message);
         }
     }
 
+    /**
+     * \brief Prints the \p message to the server debug log along with the \p player name, if applicable.
+     */
     public static void Log(EntityPlayer? player, String message)
     {
         if (player == null)
