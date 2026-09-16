@@ -10,7 +10,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Lunchbox;
+namespace Lunchbox.code.block_behaviour;
 
 class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHeldBag(obj), IHeldBag
 {
@@ -19,7 +19,7 @@ class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHe
 
     // Generic
     private readonly string _behaviour_guid = Guid.NewGuid().ToString();
-    private Dictionary<string, LunchboxData> _server_lunchbox_tracking = new Dictionary<string, LunchboxData>();
+    private Dictionary<string, LunchboxData> _server_lunchbox_tracking = [];
     private Type _slot_type = typeof(FoodSlot);
     private float _spoilage_modifier = 1.0f;
 
@@ -77,7 +77,7 @@ class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHe
         if (stackBackPackTree == null)
         {
             stackBackPackTree = new TreeAttribute();
-            ITreeAttribute slotsTree = new TreeAttribute();
+            TreeAttribute slotsTree = new();
 
             for (int slotIndex = 0; slotIndex < quantitySlots; slotIndex++)
             {

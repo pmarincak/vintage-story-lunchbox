@@ -1,4 +1,5 @@
-﻿using Lunchbox.code.core;
+﻿using Lunchbox.code.block_behaviour;
+using Lunchbox.code.core;
 using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;

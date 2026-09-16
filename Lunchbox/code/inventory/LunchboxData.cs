@@ -1,4 +1,5 @@
-﻿using Lunchbox.code.item;
+﻿using Lunchbox.code.block_behaviour;
+using Lunchbox.code.item;
 using Lunchbox.code.utility;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
@@ -61,7 +62,7 @@ public class LunchboxData(string guid)
         var same = player == _player_entity;
         var old_entity_name = _player_entity != null ? _player_entity.GetName() : "null";
         var new_entity_name = player != null ? player.GetName() : "null";
-        var autoeat = _lunchbox != null ? _lunchbox.CanAutoEat() : false;
+        var autoeat = _lunchbox != null && _lunchbox.CanAutoEat();
 
         _player_entity?.WatchedAttributes.UnregisterListener(OnHungerChanged);
         _player_entity?.WatchedAttributes.UnregisterListener(OnThirstChanged);
