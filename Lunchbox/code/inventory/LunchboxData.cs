@@ -5,22 +5,27 @@ using Vintagestory.API.Common;
 
 namespace Lunchbox.code.inventory;
 
-public class LunchboxData
+/**
+ * \brief Data representation of a lunchbox's current equip and inventory status.
+ * \details 
+ * Lunchbox data is split up into various other classes and data structures such as ItemStacks, EntityPlayer, InventoryBase, and so on.
+ * The Lunchboxes require all of the data to be consolidated in order to implement the auto-eat, spoilage rate, and other lunchbox functionality.
+ */
+public class LunchboxData(string guid)
 {
-    static public string HUNGER_KEY = "hunger"; //! Key for hunger-related statistics for the player
-    static public string THIRST_KEY = "thirst"; //! Key for thirst-related statistics for the player. Hydrate or Diedrate compatibility.
-    static public string LUNCHBOX_ID = "lunchbox_guid";
+    // Constants
+    public static readonly string HUNGER_KEY = "hunger"; //! Key for hunger-related statistics for the player
+    public static readonly string THIRST_KEY = "thirst"; //! Key for thirst-related statistics for the player. Hydrate or Diedrate compatibility.
+    public static readonly string LUNCHBOX_ID = "lunchbox_guid"; //! Key for tracking the lunchbox GUID value.
 
+    // Members
     private EntityPlayer? _player_entity = null; //! Player entity that has the lunchbox equipped. If null then the box is not equipped.
-    public InventoryBase? _inventory = null;
-    private List<ItemSlotBagContent> _slots = new List<ItemSlotBagContent>();
-    private ILunchbox? _lunchbox = null;
-    private string _id = "";
+    private InventoryBase? _inventory = null; //! Inventory of the player that has the lunchbox equipped. If null then the box is not equipped.
+    private List<ItemSlotBagContent> _slots = []; //! Cached inventory slots of the player that has the lunchbox equipped. If empty then the box is not equipped.
+    private ILunchbox? _lunchbox = null; //! Object type of the lunchbox we track.
+    private readonly string _id = guid; //! ID of the tracked lunchbox.
 
-    public LunchboxData(string guid) {
-        _id = guid;
-    }
-
+    // Overrides
     public static bool operator !=(LunchboxData a, LunchboxData b)
     {
         return a._id != b._id;
@@ -31,6 +36,11 @@ public class LunchboxData
         return a._id == b._id;
     }
 
+    // Setters
+
+    /**
+     * \brief Updates the \p lunchbox data with the current player \p inventory and \p bagContents.
+     */
     public void UpdateData(ItemStack lunchbox, InventoryBase inventory, List<ItemSlotBagContent> bagContents)
     {
         var player = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
@@ -42,6 +52,10 @@ public class LunchboxData
         SetSlots(bagContents);
     }
 
+    /**
+     * \brief Sets the \p player that has the lunchbox currently equipped and configures that player for auto-eat functionality.
+     * \note Logs when the lunchbox changes player ownership.
+     */
     private void SetPlayerEntity(EntityPlayer? player)
     {
         var same = player == _player_entity;
@@ -72,25 +86,9 @@ public class LunchboxData
         _lunchbox = lunchbox;
     }
 
-    private void OnHungerChanged()
-    {
-        if (_lunchbox == null ||  _player_entity == null || _inventory == null || _slots.Count == 0) return;
-
-        AutoEatUtility.OnHungerChanged(this);
-    }
-
-    private void OnThirstChanged()
-    {
-        if (_lunchbox == null || _player_entity == null || _inventory == null || _slots.Count == 0) return;
-
-        AutoEatUtility.OnThirstChanged(this);
-    }
-
-    public EntityPlayer? GetPlayerEntity()
-    {
-        return _player_entity;
-    }
-
+    /**
+     * \brief Sets the \p inventory of the player that has the lunchbox currently equipped and configures that inventory for spoilage rate functionality.
+     */
     private void SetInventory(InventoryBase? inventory)
     {
         var behaviour = _lunchbox?.GetBehavior<CollectableBehaviorLunchbox>();
@@ -108,6 +106,9 @@ public class LunchboxData
         }
     }
 
+    /**
+     * \brief Sets the cached inventory \p slots and configures the slots for spoilage rate functionality.
+     */
     private void SetSlots(List<ItemSlotBagContent> slots)
     {
 
@@ -125,8 +126,29 @@ public class LunchboxData
         }
     }
 
+    // Getters
+    public EntityPlayer? GetPlayerEntity()
+    {
+        return _player_entity;
+    }
+
     public List<ItemSlotBagContent> GetSlots()
     {
         return _slots;
+    }
+
+    // Auto-Eat Functionality
+    private void OnHungerChanged()
+    {
+        if (_lunchbox == null || _player_entity == null || _inventory == null || _slots.Count == 0) return;
+
+        AutoEatUtility.OnHungerChanged(this);
+    }
+
+    private void OnThirstChanged()
+    {
+        if (_lunchbox == null || _player_entity == null || _inventory == null || _slots.Count == 0) return;
+
+        AutoEatUtility.OnThirstChanged(this);
     }
 }
