@@ -60,7 +60,10 @@ public class LunchboxModSystem : ModSystem
 
     public static void Log(String message)
     {
-        logger?.VerboseDebug(message);
+        if (config.enable_logger)
+        {
+            logger?.VerboseDebug(message);
+        }
     }
 
     public static void Log(EntityPlayer? player, String message)
