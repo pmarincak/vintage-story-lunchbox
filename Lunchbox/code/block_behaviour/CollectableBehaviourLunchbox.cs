@@ -2,58 +2,40 @@ using Lunchbox.code.inventory;
 using Lunchbox.code.utility;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-#nullable disable
 
 namespace Lunchbox;
 
-class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
+class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHeldBag(obj), IHeldBag
 {
-    private static string LUNCHBOX_BEHAVIOUR_ID = "lunchbox_behaviour_guid";
+    // Constants
+    private static readonly string LUNCHBOX_BEHAVIOUR_ID = "lunchbox_behaviour_guid";
 
     // Generic
-    private string _behaviour_guid = "";
+    private readonly string _behaviour_guid = Guid.NewGuid().ToString();
     private Dictionary<string, LunchboxData> _server_lunchbox_tracking = new Dictionary<string, LunchboxData>();
-    private Type _slot_type;
+    private Type _slot_type = typeof(FoodSlot);
     private float _spoilage_modifier = 1.0f;
 
-    public CollectableBehaviorLunchbox(CollectibleObject obj) : base(obj)
-    {
-        _behaviour_guid = Guid.NewGuid().ToString();
-    }
-
+    // Overrides
     public override void Initialize(JsonObject properties)
     {
         base.Initialize(properties);
 
-        ParseSlotType(properties["slotType"].AsString(""));
-    }
-
-    /**
-     * \brief Parses the provided slot \a type to use for creating slots.
-     * \sa GetOrCreateSlots
-     */
-    private void ParseSlotType(string type)
-    {
+        var type = properties["slotType"].AsString("");
         if (type == "Generic")
         {
             _slot_type = typeof(ItemSlotBagContent);
         }
-        else {
-            _slot_type = typeof(FoodSlot);
-        }
     }
 
+    // Force an override on Store so that we can set IDs for spoilage rate modification
     public new void Store(ItemStack bagstack, ItemSlotBagContent slot)
     {
         base.Store(bagstack, slot);
@@ -73,13 +55,6 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
 
         // This info technically lives on the Lunchbox but the order looks strange so we'll put it here
         dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(_spoilage_modifier, 2)));
-    }
-
-    public LunchboxData GetLunchboxData(ItemStack lunchbox)
-    {
-        var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, null);
-        var data = _server_lunchbox_tracking.Get(guid, new LunchboxData(""));
-        return data;
     }
 
     /*
@@ -138,16 +113,34 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
             }
         }
 
-        // Registers the tracking for the Lunchbox and configures the auto eat functionality if necessary
         /*
          * Cache the bagContents before we return because otherwise we cannot access the created slots 
          * for the lunchbox implementation without recreating the slots and we want them to match
          */
-        ConfigureAutoEat(bagstack, parentinv, bagContents);
+        ConfigureAutoEat(bagstack, parentinv, bagContents); // Change
 
         return bagContents;
     }
 
+    // Lunchbox
+
+    /**
+    * \brief Parses the provided slot \p type to use for creating slots.
+    * \sa GetOrCreateSlots
+    */
+    public LunchboxData GetLunchboxData(ItemStack lunchbox)
+    {
+        var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, null);
+        var data = _server_lunchbox_tracking.Get(guid, new LunchboxData(""));
+        return data;
+    }
+
+    // 
+    /**
+    * \brief Registers the data tracking for the \p lunchbox using it's \p bagContents for the player \p inventory.
+    * \note Configures the auto eat functionality if necessary.
+    * \note Lazy loads and logs the tracking information as needed.
+    */
     public void ConfigureAutoEat(ItemStack lunchbox, InventoryBase inventory, List<ItemSlotBagContent> bagContents)
     {
         // Get the GUID or Assign if not exists
@@ -175,7 +168,7 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
     }
 
     /**
-    * \brief Returns a transition speed modification.
+    * \brief Returns a transition speed modification for spoilage rate functionality.
     */
     public float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
     {
@@ -183,13 +176,17 @@ class CollectableBehaviorLunchbox : CollectibleBehaviorHeldBag, IHeldBag
         if (transType != EnumTransitionType.Perish) return 1;
         if (stack == null || stack.Collectible == null) return 1;
 
-        // If it's not in this Lunchbox skip
-         if (stack.TempAttributes.GetString(LUNCHBOX_BEHAVIOUR_ID, "") != _behaviour_guid) return 1;
+        // All backpacks share the same inventory
+        // If it's not managed by this behaviour then skip
+        if (stack.TempAttributes.GetString(LUNCHBOX_BEHAVIOUR_ID, "") != _behaviour_guid) return 1;
 
         // No support for per-food-category perish rate yet
         return baseMul * _spoilage_modifier;
     }
 
+    /**
+    * \brief Sets a temporary attribute on the \p item for spoilage rate functionality.
+    */
     public void AddTemporaryLunchboxID(ItemStack? item)
     {
         item?.TempAttributes.SetString(LUNCHBOX_BEHAVIOUR_ID, _behaviour_guid);
