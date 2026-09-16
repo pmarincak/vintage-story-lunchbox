@@ -19,7 +19,6 @@ public class LunchboxModSystem : ModSystem
         api.RegisterItemClass("Lunchbox.LunchboxItem", typeof(ItemLunchBox));
         api.RegisterItemClass("Lunchbox.CoolerItem", typeof(ItemCooler));
         api.RegisterItemClass("Lunchbox.TemporalBackpackItem", typeof(ItemTemporalBackpack));
-
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -61,7 +60,7 @@ public class LunchboxModSystem : ModSystem
 
     public static void Log(String message)
     {
-        logger?.Debug(message);
+        logger?.VerboseDebug(message);
     }
 
     public static void Log(EntityPlayer? player, String message)
