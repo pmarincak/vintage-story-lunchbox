@@ -3,12 +3,15 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Lunchbox;
+namespace Lunchbox.code.utility;
 
+/**
+ * \brief Contains various utilities used by the Lunchbox for assiting with auto-eat functionality.
+ */
 public static class AutoEatUtility
 {
     /**
-    * \brief Called when hunger-related statistics are changed. If the current satiety is less than the minimum then auto-eat from the lunchbox inventory.
+    * \brief Called when hunger-related statistics are changed for the \p data. If the current satiety is less than the minimum then auto-eat from the lunchbox inventory.
     */
     public static void OnHungerChanged(LunchboxData data)
     {
@@ -38,7 +41,7 @@ public static class AutoEatUtility
     }
 
     /**
-     * \brief Called when thirst-related statistics are changed. If the current thirst is less than the minimum then auto-eat from the lunchbox inventory.
+     * \brief Called when thirst-related statistics are changed for the \p data. If the current thirst is less than the minimum then auto-eat from the lunchbox inventory.
      */
     public static void OnThirstChanged(LunchboxData data)
     {
@@ -69,7 +72,7 @@ public static class AutoEatUtility
     }
 
     /**
-     * \brief Attempts to consume the food item located in the \a slot.
+     * \brief Attempts to have the \p player consume the food item located in the \p slot.
      */
     private static void ConsumeItem(ItemSlotBagContent? slot, EntityPlayer? player)
     {
@@ -79,7 +82,7 @@ public static class AutoEatUtility
     }
 
     /**
-     * \brief Returns the first inventory slot within the lunchbox that contains items with positive satiety values.
+     * \brief Returns the first inventory slot within the lunchbox \p data that contains items with positive satiety values.
      */
     private static ItemSlotBagContent? FindFirstEdibleSlot(LunchboxData data)
     {
@@ -87,7 +90,7 @@ public static class AutoEatUtility
     }
 
     /**
-     * \brief Returns the first inventory slot within the lunchbox that contains items with positive hydration values.
+     * \brief Returns the first inventory slot within the lunchbox \p data that contains items with positive hydration values.
      */
     private static ItemSlotBagContent? FindFirstDrinkableSlot(LunchboxData data)
     {
@@ -95,7 +98,7 @@ public static class AutoEatUtility
     }
 
     /**
-     * \brief Retuns the first inventory slot within the lunchbox that contains edible items matching the criteria function.
+     * \brief Retuns the first inventory slot within the lunchbox \p data that contains edible items matching the \p CriteriaFunction.
      */
     private static ItemSlotBagContent? FindFirstValidSlot(LunchboxData data, System.Func<ItemSlot?, EntityPlayer?, IWorldAccessor?, bool> CriteriaFunction)
     {
