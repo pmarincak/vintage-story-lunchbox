@@ -1,4 +1,5 @@
-﻿using Vintagestory.API.Common;
+﻿using Lunchbox.code.inventory;
+using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
