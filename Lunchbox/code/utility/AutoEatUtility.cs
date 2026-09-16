@@ -114,7 +114,13 @@ public static class AutoEatUtility
         ItemSlotBagContent? cooked_container_slot = null;
         ItemSlotBagContent? meal_holding_container_slot = null;
         ItemSlotBagContent? first_edible_slot = null;
+        
         var world = player?.World;
+        if (world == null)
+        {
+            return null;
+        }
+
         foreach (ItemSlotBagContent? slot in contents)
         {
             if (slot == null) { continue; }
@@ -124,7 +130,7 @@ public static class AutoEatUtility
             if (cooked_container_slot == null && item is BlockCookedContainerBase)
             {
                 var container = item as BlockCookedContainerBase;
-                if (container.IsEmpty(slot.Itemstack)) { continue; }
+                if (container == null || container.IsEmpty(slot.Itemstack)) { continue; }
                 if (!CriteriaFunction(slot, player, world)) { continue; }
 
                 cooked_container_slot = slot;
