@@ -53,6 +53,11 @@ public static class AutoEatUtility
         }
 
         ITreeAttribute thirst_tree = player.WatchedAttributes.GetTreeAttribute(LunchboxData.THIRST_KEY);
+        if (thirst_tree == null)
+        {
+            return;
+        }
+
         var current_old = thirst_tree.GetFloat("currentThirst");
         if (current_old > (float)LunchboxModSystem.config.minimum_thirst)
         {

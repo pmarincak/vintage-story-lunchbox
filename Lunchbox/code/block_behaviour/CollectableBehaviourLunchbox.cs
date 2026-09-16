@@ -130,7 +130,7 @@ class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHe
     */
     public LunchboxData GetLunchboxData(ItemStack lunchbox)
     {
-        var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, null);
+        var guid = lunchbox.Attributes.GetAsString(LunchboxData.LUNCHBOX_ID, "");
         var data = _server_lunchbox_tracking.Get(guid, new LunchboxData(""));
         return data;
     }
