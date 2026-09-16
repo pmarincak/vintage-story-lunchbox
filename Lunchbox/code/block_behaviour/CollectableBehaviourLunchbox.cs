@@ -1,4 +1,5 @@
 using Lunchbox.code.inventory;
+using Lunchbox.code.utility;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

@@ -1,17 +1,16 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Lunchbox;
+namespace Lunchbox.code.utility;
 
 /**
  * \brief Contains various utilities used by the Lunchbox to determine food spoilage.
  */
 public static class SpoilageUtility
 {
-
-    private static float DEFAULT_PERISHABLE_FACTOR = 1.0f;
+    private static readonly float DEFAULT_PERISHABLE_FACTOR = 1.0f;
 
     /**
-     * \brief Returns whether the spoilage rate multiplier for the \p lunchbox.
+     * \brief Returns the spoilage rate multiplier for the \p lunchbox.
      */
     public static float GetSpoilageRateMul(CollectibleObject? lunchbox)
     {

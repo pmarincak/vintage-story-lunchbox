@@ -23,7 +23,7 @@ class FoodSlot : ItemSlotBagContent
     }
 
     /**
-     * \brief Returns whether we can store the items held by \a source_slot.
+     * \brief Returns whether we can store the items held by \p source_slot.
      */
     private bool CanStoreItem(ItemSlot source_slot)
     {
