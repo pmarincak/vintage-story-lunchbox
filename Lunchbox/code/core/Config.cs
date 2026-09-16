@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lunchbox.code
+namespace Lunchbox.code.core
 {
     public class Config
     {
