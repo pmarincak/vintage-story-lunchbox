@@ -1,10 +1,8 @@
-﻿using System.Collections;
+﻿using Lunchbox.code.item;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Lunchbox;
+namespace Lunchbox.code.inventory;
 
 public class LunchboxData
 {
@@ -22,12 +20,12 @@ public class LunchboxData
         _id = guid;
     }
 
-    public static bool operator!= (LunchboxData a, LunchboxData b)
+    public static bool operator !=(LunchboxData a, LunchboxData b)
     {
         return a._id != b._id;
     }
 
-    public static bool operator == (LunchboxData a, LunchboxData b)
+    public static bool operator ==(LunchboxData a, LunchboxData b)
     {
         return a._id == b._id;
     }
@@ -36,8 +34,9 @@ public class LunchboxData
     {
         var player = FoodItemUtility.GetPlayerOwnerFromInventory(inventory);
 
+        // Order Important
+        SetLunchbox((ILunchbox)lunchbox.Collectible);
         SetPlayerEntity(player);
-        SetLunchbox((ILunchbox) lunchbox.Collectible);
         SetInventory(inventory);
         SetSlots(bagContents);
     }
@@ -47,14 +46,18 @@ public class LunchboxData
         var same = player == _player_entity;
         var old_entity_name = _player_entity != null ? _player_entity.GetName() : "null";
         var new_entity_name = player != null ? player.GetName() : "null";
+        var autoeat = _lunchbox != null ? _lunchbox.CanAutoEat() : false;
 
         _player_entity?.WatchedAttributes.UnregisterListener(OnHungerChanged);
         _player_entity?.WatchedAttributes.UnregisterListener(OnThirstChanged);
 
         _player_entity = player;
 
-        _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
-        player?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
+        if (autoeat)
+        {
+            _player_entity?.WatchedAttributes.RegisterModifiedListener(HUNGER_KEY, OnHungerChanged);
+            _player_entity?.WatchedAttributes.RegisterModifiedListener(THIRST_KEY, OnThirstChanged);
+        }
 
         // We'll update because it's easier to keep everything up to date with the other objects but we'll only log when it changes for server owners
         if (!same)
