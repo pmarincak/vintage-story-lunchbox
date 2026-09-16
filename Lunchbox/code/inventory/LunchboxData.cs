@@ -87,24 +87,14 @@ public class LunchboxData(string guid)
         _lunchbox = lunchbox;
     }
 
-    /**
-     * \brief Sets the \p inventory of the player that has the lunchbox currently equipped and configures that inventory for spoilage rate functionality.
-     */
     private void SetInventory(InventoryBase? inventory)
     {
-        var behaviour = _lunchbox?.GetBehavior<CollectableBehaviorLunchbox>();
-
-        if (_inventory != null && behaviour != null)
-        {
-            _inventory.OnAcquireTransitionSpeed -= behaviour.Inventory_OnAcquireTransitionSpeed;
-        }
-
         _inventory = inventory;
+    }
 
-        if (_inventory != null && behaviour != null)
-        {
-            _inventory.OnAcquireTransitionSpeed += behaviour.Inventory_OnAcquireTransitionSpeed;
-        }
+    public InventoryBase? GetInventory()
+    {
+        return _inventory;
     }
 
     /**

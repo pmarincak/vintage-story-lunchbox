@@ -1,4 +1,5 @@
 using Lunchbox.code.inventory;
+using Lunchbox.code.item;
 using Lunchbox.code.utility;
 using System;
 using System.Collections.Generic;
@@ -163,7 +164,20 @@ class CollectableBehaviorLunchbox(CollectibleObject obj) : CollectibleBehaviorHe
 
         // Update the tracking data
         var data = _server_lunchbox_tracking[guid];
+
+        // Remove transition speed from the old inventory
+        var old_inventory = data.GetInventory();
+        if (old_inventory != null)
+        {
+            old_inventory.OnAcquireTransitionSpeed -= Inventory_OnAcquireTransitionSpeed;
+        }
+
+        // This inventory may already have the transition speed set - let's remove it just in case
+        inventory?.OnAcquireTransitionSpeed -= Inventory_OnAcquireTransitionSpeed;
+        inventory?.OnAcquireTransitionSpeed += Inventory_OnAcquireTransitionSpeed;
+
         data.UpdateData(lunchbox, inventory, bagContents);
+
         _server_lunchbox_tracking[guid] = data;
     }
 
