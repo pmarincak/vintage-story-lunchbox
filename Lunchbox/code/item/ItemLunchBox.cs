@@ -6,6 +6,7 @@ public class ItemLunchBox : ILunchbox
 {
     public ItemLunchBox() : base()
     {
-        auto_eat_enabled = true;
     }
+
+    public override bool CanAutoEat() { return true; }
 }

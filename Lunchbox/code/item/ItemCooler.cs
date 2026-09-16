@@ -6,6 +6,7 @@ public class ItemCooler : ILunchbox
 {
     public ItemCooler() : base() 
     {
-        auto_eat_enabled = LunchboxModSystem.config.cooler_autoeat_enabled;
     }
+
+    public override bool CanAutoEat() { return LunchboxModSystem.config.cooler_autoeat_enabled; }
 }

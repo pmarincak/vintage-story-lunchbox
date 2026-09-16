@@ -4,8 +4,6 @@ namespace Lunchbox.code.item;
 
 public class ILunchbox : Item
 {
-    protected bool auto_eat_enabled = true; //! Whether to allow auto-eat or not for Lunchbox instances. Sub-classes should override.
-
     /**
     * \brief Called when the item changes inventory slots.
     */
@@ -19,9 +17,9 @@ public class ILunchbox : Item
         behaviour.ConfigureAutoEat(slot.Itemstack, slot.Inventory, data.GetSlots());
     }
 
-    public bool CanAutoEat()
-    {
-        return auto_eat_enabled;
-    }
+    /**
+    * \brief Whether to allow auto-eat or not for items of this type.
+    */
+    public virtual bool CanAutoEat() { return true; }
 }
 
