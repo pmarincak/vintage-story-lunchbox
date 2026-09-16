@@ -1,6 +1,6 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Lunchbox;
+namespace Lunchbox.code.item;
 
 public class ILunchbox : Item
 {
@@ -17,6 +17,11 @@ public class ILunchbox : Item
         var data = behaviour.GetLunchboxData(slot.Itemstack);
 
         behaviour.ConfigureAutoEat(slot.Itemstack, slot.Inventory, data.GetSlots());
+    }
+
+    public bool CanAutoEat()
+    {
+        return auto_eat_enabled;
     }
 }
 
