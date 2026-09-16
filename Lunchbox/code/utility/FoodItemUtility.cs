@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Vintagestory.API.Common;
-using Vintagestory.Common;
+﻿using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace Lunchbox;
+namespace Lunchbox.code.utility;
 
 /**
  * \brief Contains various utilities used by the Lunchbox to determine food items & related functionality.
@@ -12,7 +9,7 @@ namespace Lunchbox;
 public static class FoodItemUtility
 {
     /**
-     * \brief Returns whether the \a slot in the \a player_entity's inventory contains nutritional information or not.
+     * \brief Returns whether the \p slot in the \p player_entity's inventory contains nutritional information or not.
      */
     public static bool HasNutritionInformation(ItemSlot? slot, EntityPlayer? player_entity, IWorldAccessor? world)
     {
@@ -49,7 +46,7 @@ public static class FoodItemUtility
     }
 
     /**
-     * \brief Returns whether the item held in \a slot is a meal container or not.
+     * \brief Returns whether the item held in \p slot is a meal container or not.
      * \note A meal container is a bowl, a pot, a crock, etc.
      */
     public static bool IsMealContainer(ItemSlot? slot)
@@ -58,7 +55,7 @@ public static class FoodItemUtility
     }
 
     /**
-     * \brief Returns the PlayerEntity which owns the \a inventory, if applicable.
+     * \brief Returns the PlayerEntity which owns the \p inventory, if applicable.
      */
     public static EntityPlayer? GetPlayerOwnerFromInventory(InventoryBase inventory)
     {
@@ -67,7 +64,7 @@ public static class FoodItemUtility
     }
 
     /**
-     * \brief Returns whether the item in \a slot is a meal container that can hold meals or not.
+     * \brief Returns whether the item in \p slot is a meal container that can hold meals or not.
      * \note There is no way to be sure what a "meal holding container" is (ex. Bowl). For now we check the code to verify it is a bowl.
      */
     public static bool IsMealHoldingContainer(ItemSlot? slot)
@@ -76,7 +73,7 @@ public static class FoodItemUtility
     }
 
     /**
-     * \brief Returns whether the \a slot in the \a player_entity's inventory contains hydration information or not.
+     * \brief Returns whether the \p slot in the \p player_entity's inventory contains hydration information or not.
      * \note Hydrate or Diedrate Compatibility
      */
     public static bool HasHydrationInformation(ItemSlot? slot, EntityPlayer? player_entity, IWorldAccessor? world)

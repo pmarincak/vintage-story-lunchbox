@@ -1,11 +1,12 @@
-﻿using Vintagestory.API.Common;
+﻿using Lunchbox.code.item;
 
 namespace Lunchbox;
 
-public class ItemTemporalBackpack : ItemLunchBox
+public class ItemTemporalBackpack : ILunchbox
 {
-    public override void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory)
+    public ItemTemporalBackpack() : base()
     {
-        ((ILunchbox)this).ConfigureAutoEat(world, inventory, LunchboxModSystem.config.temporal_backpack_autoeat_enabled);
     }
+
+    public override bool CanAutoEat() { return LunchboxModSystem.config.temporal_backpack_autoeat_enabled;}
 }

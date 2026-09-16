@@ -1,11 +1,12 @@
-﻿using Vintagestory.API.Common;
+﻿using Lunchbox.code.item;
 
 namespace Lunchbox;
 
-public class ItemCooler : ItemLunchBox
+public class ItemCooler : ILunchbox
 {
-    public override void ConfigureAutoEat(IWorldAccessor world, InventoryBase inventory)
+    public ItemCooler() : base() 
     {
-        ((ILunchbox)this).ConfigureAutoEat(world, inventory, LunchboxModSystem.config.cooler_autoeat_enabled);
     }
+
+    public override bool CanAutoEat() { return LunchboxModSystem.config.cooler_autoeat_enabled; }
 }
