@@ -5,9 +5,9 @@
     "name": "Lunchbox",
     "authors": [ "azurempress" ],
     "description": "Adds various storage containers which automatically feeds the player when hungry.",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "dependencies": {
-        "game": "1.22.0"
+        "game": "1.23.0-pre.1"
     },
 	"website": "https://github.com/pmarincak/vintage-story-lunchbox"
 }

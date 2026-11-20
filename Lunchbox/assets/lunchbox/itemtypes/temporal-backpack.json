@@ -17,7 +17,8 @@
 					"x2": 0.75,
 					"y2": 0.375,
 					"z2": 0.75
-				}
+				},
+				"centerRotationMode": "22.5degnot45deg"
 			}
 		},
 		{
@@ -149,6 +150,30 @@
 			"x2": 0.75,
 			"y2": 0.75,
 			"z2": 0.75
+		}
+	},
+	"heldSounds": {
+		"invpickup": {
+			"path": "game:held/ui-inventory/leatherbag/ui-leatherbag*",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
+		},
+		"invplace": {
+			"path": "game:held/ui-inventory/leatherbag/ui-leatherbag*",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
 		}
 	}
 }

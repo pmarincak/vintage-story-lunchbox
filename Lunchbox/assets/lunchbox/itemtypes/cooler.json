@@ -17,7 +17,8 @@
 					"x2": 0.75,
 					"y2": 0.375,
 					"z2": 0.75
-				}
+				},
+				"centerRotationMode": "22.5degnot45deg"
 			}
 		},
 		{ "name": "Lunchbox.LunchboxBehaviour" },
@@ -122,5 +123,29 @@
 	"combustibleProps": {
 		"burnTemperature": 600,
 		"burnDuration": 10
+	},
+	"heldSounds": {
+		"invpickup": {
+			"path": "game:block/planks",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
+		},
+		"invplace": {
+			"path": "game:block/planks",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
+		}
 	}
 }

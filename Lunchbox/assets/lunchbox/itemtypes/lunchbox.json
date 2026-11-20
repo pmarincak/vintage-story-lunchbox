@@ -2,7 +2,7 @@
 	"code": "lunchbox",
 	"creativeinventory": {
 		"general": [ "*" ],
-		"items": ["*"]
+		"items": [ "*" ]
 	},
 	"class": "Lunchbox.LunchboxItem",
 	"behaviors": [
@@ -17,7 +17,8 @@
 					"x2": 0.75,
 					"y2": 0.375,
 					"z2": 0.75
-				}
+				},
+				"centerRotationMode": "22.5degnot45deg"
 			}
 		},
 		{ "name": "Lunchbox.LunchboxBehaviour" },
@@ -39,7 +40,7 @@
 		},
 		{
 			"code": "color",
-			"states": ["plain", "mordant", "blue", "red", "yellow", "green", "purple", "pink", "orange", "brown", "gray", "black", "white"]
+			"states": [ "plain", "mordant", "blue", "red", "yellow", "green", "purple", "pink", "orange", "brown", "gray", "black", "white" ]
 		}
 	],
 	"attributes": {
@@ -128,5 +129,29 @@
 	"combustibleProps": {
 		"burnTemperature": 600,
 		"burnDuration": 10
+	},
+	"heldSounds": {
+		"invpickup": {
+			"path": "game:held/ui-inventory/plant/ui-plant*",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
+		},
+		"invplace": {
+			"path": "game:held/ui-inventory/plant/ui-plant*",
+			"pitch": {
+				"avg": 1.0,
+				"var": 0.25
+			},
+			"volume": {
+				"avg": 1.0,
+				"var": 0.0
+			}
+		}
 	}
 }
